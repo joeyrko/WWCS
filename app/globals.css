@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand palette */
+  --color-wwc-black: #070707;
+  --color-wwc-black-soft: #121212;
+  --color-wwc-red: #e0141a;
+  --color-wwc-red-dark: #9c0d11;
+  --color-wwc-red-glow: #ff363d;
+  --color-wwc-white: #f7f7f7;
+
+  --color-wwc-grey-950: #0c0c0c;
+  --color-wwc-grey-900: #161616;
+  --color-wwc-grey-800: #212121;
+  --color-wwc-grey-700: #2e2e2e;
+  --color-wwc-grey-600: #454545;
+  --color-wwc-grey-500: #6b6b6b;
+  --color-wwc-grey-400: #8f8f8f;
+  --color-wwc-grey-300: #b3b3b3;
+  --color-wwc-grey-200: #d4d4d4;
+  --color-wwc-grey-100: #eeeeee;
+
+  --font-display: var(--font-anton), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-pulse-live: pulse-live 1.6s ease-in-out infinite;
+  --animate-marquee: marquee 28s linear infinite;
+}
+
+@keyframes pulse-live {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(224, 20, 26, 0.65);
+  }
+  50% {
+    opacity: 0.85;
+    box-shadow: 0 0 0 6px rgba(224, 20, 26, 0);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+:root {
+  --background: var(--color-wwc-black);
+  --foreground: var(--color-wwc-white);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-wwc-red);
+  color: var(--color-wwc-white);
+}
+
+/* Diagonal section divider utility */
+.clip-diagonal {
+  clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+}
+
+.clip-diagonal-up {
+  clip-path: polygon(0 12%, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Red glow used on interactive/hover elements */
+.glow-red {
+  box-shadow: 0 0 0 rgba(224, 20, 26, 0);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.glow-red:hover {
+  box-shadow: 0 0 24px 2px rgba(224, 20, 26, 0.45);
+}
+
+/* Focus ring in brand red for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-wwc-red);
+  outline-offset: 2px;
+}
+
+.text-gradient-red {
+  background: linear-gradient(90deg, #ffffff 0%, #ff9a9c 60%, var(--color-wwc-red) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
