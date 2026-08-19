@@ -46,10 +46,10 @@ gated content:
 
 | Email               | Password        | Plan          |
 | ------------------- | --------------- | ------------- |
-| `fan@wwc.tv`         | `wrestlemania`   | WWC+ Monthly  |
-| `champion@wwc.tv`    | `championship`   | WWC+ Annual   |
-| `rookie@wwc.tv`      | `firstmatch`     | Free          |
-| `admin@wwc.tv`       | `qualitycontrol` | WWC+ Annual (admin) |
+| `fan@wwc.tv`         | `wrestlemania`   | WWC+ Annual   |
+| `champion@wwc.tv`    | `championship`   | WWC Legacy Pass |
+| `rookie@wwc.tv`      | `firstmatch`     | None (never subscribed) |
+| `admin@wwc.tv`       | `qualitycontrol` | WWC Legacy Pass (admin) |
 
 ### Admin / QC dashboard
 
@@ -80,7 +80,7 @@ Everything under [`/data`](data) is a static fixture — no database required:
 - [`data/wrestlers.ts`](data/wrestlers.ts) — 14-person fictional roster
 - [`data/events.ts`](data/events.ts) — 8 events (upcoming, one live, two past) with full match cards
 - [`data/videos.ts`](data/videos.ts) — 14 on-demand videos across PPV replays, weekly shows, full matches, highlights
-- [`data/plans.ts`](data/plans.ts) — Free / WWC+ Monthly / WWC+ Annual
+- [`data/plans.ts`](data/plans.ts) — WWC+ Monthly ($6.99) / WWC+ Annual ($69.99) / WWC Legacy Pass ($99.99)
 - [`data/users.ts`](data/users.ts) — in-memory user + order store (resets on server restart)
 
 None of this is imported directly by pages or components. Everything goes through the
@@ -109,9 +109,9 @@ lookups.
 - `POST /api/stripe/portal` — creates a Billing Portal session (needs a real test-mode
   customer ID — see `.env.example`).
 
-To exercise the full loop locally: create real Stripe **test-mode** prices for the two paid
-plans, set `STRIPE_SECRET_KEY` / `STRIPE_PRICE_MONTHLY` / `STRIPE_PRICE_ANNUAL`, then forward
-webhooks with the Stripe CLI:
+To exercise the full loop locally: create real Stripe **test-mode** prices for the three paid
+plans, set `STRIPE_SECRET_KEY` / `STRIPE_PRICE_MONTHLY` / `STRIPE_PRICE_ANNUAL` /
+`STRIPE_PRICE_LEGACY`, then forward webhooks with the Stripe CLI:
 
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook

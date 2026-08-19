@@ -1,49 +1,47 @@
 import type { Plan } from "@/types";
 
+// Every plan here is paid — there is no free tier and no free access to
+// gated content. Signing up still creates an account without payment
+// (PlanId "free" internally, see lib/data/users.ts) since checkout requires
+// an existing session, but that state grants no library/event access —
+// it's purely a placeholder until a plan is purchased.
 export const plans: Plan[] = [
-  {
-    id: "free",
-    name: "Free",
-    priceInCents: 0,
-    interval: null,
-    tagline: "Get in the door.",
-    features: [
-      "Weekly show highlights",
-      "Select free full matches",
-      "News & roster profiles",
-      "Ad-supported",
-    ],
-  },
   {
     id: "monthly",
     name: "WWC+ Monthly",
-    priceInCents: 999,
+    priceInCents: 699,
     interval: "month",
     tagline: "Every show. Every month.",
-    features: [
-      "Full on-demand video library",
-      "Included live PPV events",
-      "Ad-free viewing",
-      "Watch on any device",
-      "Cancel anytime",
-    ],
-    highlighted: true,
+    features: ["Access to the entire library", "Access to live events", "Cancel anytime"],
     stripePriceEnvVar: "STRIPE_PRICE_MONTHLY",
   },
   {
     id: "annual",
     name: "WWC+ Annual",
-    priceInCents: 8999,
+    priceInCents: 6999,
     interval: "year",
-    tagline: "Best value for the diehard.",
+    tagline: "Every show, all year.",
     features: [
-      "Everything in WWC+ Monthly",
-      "Save 25% vs. paying monthly",
-      "Early access to live event tickets",
-      "Annual member badge",
+      "Included live PPV events",
+      "Equivalent to $5.83 a month",
       "Cancel anytime",
     ],
+    highlighted: true,
     stripePriceEnvVar: "STRIPE_PRICE_ANNUAL",
+  },
+  {
+    id: "legacy",
+    name: "WWC Legacy Pass",
+    priceInCents: 9999,
+    interval: "year",
+    tagline: "Ringside access, all year long.",
+    features: [
+      "Everything in WWC+ Annual",
+      "1 general admission ticket to each of our 4 biggest events of the year",
+      "One photo with your favorite wrestler per event",
+      "Cancel anytime",
+    ],
+    stripePriceEnvVar: "STRIPE_PRICE_LEGACY",
   },
 ];
 

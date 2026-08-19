@@ -11,7 +11,7 @@ export const users: MockUser[] = [
     name: "Alex Fan",
     email: "fan@wwc.tv",
     passwordHash: bcrypt.hashSync("wrestlemania", 10),
-    plan: "monthly",
+    plan: "annual",
     purchasedEventSlugs: ["guerra-de-titanes-2026"],
   },
   {
@@ -19,7 +19,7 @@ export const users: MockUser[] = [
     name: "Jordan Champion",
     email: "champion@wwc.tv",
     passwordHash: bcrypt.hashSync("championship", 10),
-    plan: "annual",
+    plan: "legacy",
     purchasedEventSlugs: ["guerra-de-titanes-2026", "noche-de-campeones-2025"],
   },
   {
@@ -35,12 +35,15 @@ export const users: MockUser[] = [
     name: "WWC Admin",
     email: "admin@wwc.tv",
     passwordHash: bcrypt.hashSync("qualitycontrol", 10),
-    plan: "annual",
+    plan: "legacy",
     purchasedEventSlugs: [],
     isAdmin: true,
   },
 ];
 
+// Historical order records — amounts/labels reflect what was actually
+// charged at the time and intentionally aren't updated when data/plans.ts
+// changes prices, same as a real invoice history wouldn't be.
 export const orders: Order[] = [
   {
     id: "o1",

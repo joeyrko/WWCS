@@ -91,7 +91,9 @@ export async function getAllOrders(): Promise<Order[]> {
   );
 }
 
-const PLAN_RANK: Record<PlanId, number> = { free: 0, monthly: 1, annual: 1 };
+// All three paid plans grant full library + live event access — only the
+// unpaid "free" (no plan yet) state is excluded from subscriber-gated content.
+const PLAN_RANK: Record<PlanId, number> = { free: 0, monthly: 1, annual: 1, legacy: 1 };
 
 // Accepts anything with the shape of a mock user's plan/purchase fields —
 // both the in-memory MockUser and the NextAuth Session["user"] satisfy this.

@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   description:
-    "Every WWC live pay-per-view event and the full on-demand library. Choose a plan, sign up free, or log in to start watching.",
+    "Every WWC live pay-per-view event and the full on-demand library. Choose a plan to start watching, or log in if you already have an account.",
 };
 
 export default async function GatePage() {
@@ -29,7 +29,7 @@ export default async function GatePage() {
       <section className="mx-auto max-w-5xl px-4 pb-10 pt-16 text-center sm:px-6 sm:pt-24 lg:px-8">
         <StaggerIn>
           <span className="mb-4 inline-block rounded-sm border border-wwc-red/50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wwc-red">
-            WWC+ Streaming
+            WWC+ Streaming Platform
           </span>
           <h1 className="text-gradient-red font-display text-5xl uppercase leading-[0.95] tracking-wide sm:text-6xl lg:text-7xl">
             Every Fight. Every Show.
@@ -106,12 +106,6 @@ export default async function GatePage() {
                   {isCurrent ? (
                     <Button variant="outline" className="w-full" disabled>
                       Current Plan
-                    </Button>
-                  ) : plan.id === "free" ? (
-                    <Button asChild variant={plan.highlighted ? "primary" : "outline"} className="w-full">
-                      <Link href={session?.user ? "/account" : "/sign-up"}>
-                        {session?.user ? "Manage Account" : "Sign Up Free"}
-                      </Link>
                     </Button>
                   ) : (
                     <CheckoutButton

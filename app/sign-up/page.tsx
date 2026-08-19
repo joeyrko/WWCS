@@ -6,7 +6,7 @@ import { SignUpForm } from "@/components/auth/sign-up-form";
 
 export const metadata: Metadata = {
   title: "Sign Up",
-  description: "Create a free WWC account to start watching.",
+  description: "Create your WWC account, then choose a plan to start watching.",
 };
 
 export default async function SignUpPage({
@@ -18,7 +18,7 @@ export default async function SignUpPage({
   if (session?.user) redirect(callbackUrl ?? "/events");
 
   return (
-    <AuthCard title="Create Account" subtitle="Join WWC for free — upgrade to WWC+ anytime.">
+    <AuthCard title="Create Account" subtitle="Create your account, then choose a plan to get in.">
       <SignUpForm callbackUrl={callbackUrl ?? "/events"} />
     </AuthCard>
   );

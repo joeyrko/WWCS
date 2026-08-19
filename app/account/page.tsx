@@ -39,14 +39,14 @@ export default async function AccountPage() {
                 Current Plan
               </p>
               <p className="mt-1 font-display text-2xl uppercase tracking-wide text-white">
-                {plan?.name ?? "Free"}
+                {plan?.name ?? "No Active Plan"}
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="outline">
-                <Link href="/">Change Plan</Link>
+                <Link href="/">{plan ? "Change Plan" : "Choose a Plan"}</Link>
               </Button>
-              {plan && plan.id !== "free" && <ManageBillingButton />}
+              {plan && <ManageBillingButton />}
             </div>
           </div>
         </div>
