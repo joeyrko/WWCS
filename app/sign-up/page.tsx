@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/get-session";
 import { AuthCard } from "@/components/auth/auth-card";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 
@@ -12,11 +14,12 @@ export default async function SignUpPage({
 }: {
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
-  const { callbackUrl } = await searchParams;
+  const [{ callbackUrl }, session] = await Promise.all([searchParams, getSession()]);
+  if (session?.user) redirect(callbackUrl ?? "/events");
 
   return (
     <AuthCard title="Create Account" subtitle="Join WWC for free — upgrade to WWC+ anytime.">
-      <SignUpForm callbackUrl={callbackUrl ?? "/account"} />
+      <SignUpForm callbackUrl={callbackUrl ?? "/events"} />
     </AuthCard>
   );
 }

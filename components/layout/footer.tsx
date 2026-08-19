@@ -74,7 +74,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/pricing"
+                  href="/"
                   className="text-sm text-wwc-grey-400 transition-colors hover:text-wwc-white"
                 >
                   Plans &amp; Pricing
