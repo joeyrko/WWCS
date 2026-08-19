@@ -46,9 +46,6 @@ export default async function GatePage() {
                   <PlayCircle className="h-5 w-5" /> Enter WWC+
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/watch">Browse On-Demand</Link>
-              </Button>
             </div>
           ) : (
             <p className="mt-8 text-sm text-wwc-grey-400">
@@ -123,8 +120,8 @@ export default async function GatePage() {
         </StaggerGrid>
 
         <p className="mt-10 text-center text-sm text-wwc-grey-500">
-          Prices in USD. Cancel your subscription anytime from your account dashboard. PPV events
-          not included in your plan can always be purchased individually.
+          Prices in USD. Cancel your subscription anytime from your account dashboard. No refunds
+          are issued; your plan will remain active until the established end date.
         </p>
       </section>
     </div>

@@ -3,7 +3,6 @@ import { Anton, Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { AdminShortcut } from "@/components/admin/admin-shortcut";
 import "./globals.css";
 
@@ -49,7 +48,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AdminShortcut />
           <Navbar />
           <main className="flex-1">{children}</main>
-          <Footer />
           <Toaster
             theme="dark"
             toastOptions={{
