@@ -24,6 +24,21 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### Deploying (e.g. Hostinger)
+
+Build with `pnpm build`, then start with `pnpm start` (runs `node server.js`) — not `next
+start` directly. Hosts like Hostinger's Node.js App panel run your app through their own
+process manager via a plain JS "startup file" rather than invoking the `next start` CLI, so
+[`server.js`](server.js) wraps Next.js in a plain `http` server that listens on
+`process.env.PORT` (falls back to `3000`) and binds `0.0.0.0`. If your host asks for a
+"startup file" or "entry point," point it at `server.js`; if it just runs `npm start`, no
+extra config is needed. `next start` is still available as `pnpm start:next` for platforms
+that expect the standard CLI.
+
+Whatever host you use, set the environment variables below in its dashboard —
+`NEXTAUTH_SECRET` in particular is required for the app to boot cleanly (see "Environment
+variables").
+
 ### Demo accounts (credentials sign-in)
 
 The user store is in-memory and seeded with three accounts — no sign-up required to explore
