@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getSession } from "@/lib/get-session";
 import { Logo } from "@/components/layout/logo";
 import { NavLinksDesktop } from "@/components/layout/nav-links-desktop";
 import { SearchBar } from "@/components/layout/search-bar";
@@ -6,7 +6,7 @@ import { AuthNav } from "@/components/layout/auth-nav";
 import { MobileNav } from "@/components/layout/mobile-nav";
 
 export async function Navbar() {
-  const session = await auth();
+  const session = await getSession();
   const user = session?.user
     ? {
         name: session.user.name,

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar } from "lucide-react";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/get-session";
 import { videos } from "@/data/videos";
 import { getRelatedVideos, getVideoBySlug } from "@/lib/data/videos";
 import { getWrestlersBySlugs } from "@/lib/data/wrestlers";
@@ -43,7 +43,7 @@ export default async function WatchDetailPage({
   if (!video) notFound();
 
   const [session, related, wrestlers] = await Promise.all([
-    auth(),
+    getSession(),
     getRelatedVideos(video),
     getWrestlersBySlugs(video.wrestlers),
   ]);

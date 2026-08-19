@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Check } from "lucide-react";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/get-session";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/shared/checkout-button";
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PricingPage() {
-  const [session, plans] = await Promise.all([auth(), getAllPlans()]);
+  const [session, plans] = await Promise.all([getSession(), getAllPlans()]);
   const currentPlan = session?.user?.plan;
 
   return (

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/get-session";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AccountPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user) redirect("/sign-in?callbackUrl=/account");
 
   const [plan, orders] = await Promise.all([

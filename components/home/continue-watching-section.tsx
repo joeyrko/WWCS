@@ -1,9 +1,9 @@
-import { auth } from "@/auth";
+import { getSession } from "@/lib/get-session";
 import { getTrendingVideos } from "@/lib/data/videos";
 import { VideoCard } from "@/components/watch/video-card";
 
 export async function ContinueWatchingSection() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user) return null;
 
   const videos = await getTrendingVideos(8);

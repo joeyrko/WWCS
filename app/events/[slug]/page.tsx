@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar, MapPin } from "lucide-react";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/get-session";
 import { events } from "@/data/events";
 import { getEventBySlug } from "@/lib/data/events";
 import { userHasAccessToEvent } from "@/lib/data/users";
@@ -42,7 +42,7 @@ export default async function EventDetailPage({
   const event = await getEventBySlug(slug);
   if (!event) notFound();
 
-  const session = await auth();
+  const session = await getSession();
   const hasAccess = userHasAccessToEvent(session?.user, event);
 
   return (

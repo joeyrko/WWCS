@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/get-session";
 import { stripe, getBaseUrl } from "@/lib/stripe";
 import { getPlanById } from "@/lib/data/plans";
 import { getEventBySlug } from "@/lib/data/events";
@@ -16,7 +16,7 @@ interface PpvCheckoutBody {
 }
 
 export async function POST(request: Request) {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   }

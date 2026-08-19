@@ -19,10 +19,16 @@ type AppToken = {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
+    // Only register Google when both env vars are actually configured —
+    // an empty/unset clientId shouldn't break every other auth method.
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
     Credentials({
       name: "Credentials",
       credentials: {
@@ -55,6 +61,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/sign-in",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  // Required when self-hosting outside Vercel (e.g. Hostinger) — Auth.js
+  // otherwise rejects every request with an "UntrustedHost" error because it
+  // can't verify the incoming Host header against a known platform.
+  trustHost: true,
   session: { strategy: "jwt" },
   callbacks: {
     async signIn({ user, account }) {

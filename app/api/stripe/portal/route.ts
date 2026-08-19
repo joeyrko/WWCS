@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/get-session";
 import { getBaseUrl, stripe } from "@/lib/stripe";
 
 // Scaffolded billing portal route. In production, store the Stripe customer ID
 // on the user record when their first Checkout session completes, then read it
 // here instead of relying on an env placeholder.
 export async function POST() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   }
