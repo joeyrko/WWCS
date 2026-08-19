@@ -7,11 +7,13 @@ declare module "next-auth" {
       id: string;
       plan: PlanId;
       purchasedEventSlugs: string[];
+      isAdmin: boolean;
     } & DefaultSession["user"];
   }
 
   interface User {
     plan?: PlanId;
     purchasedEventSlugs?: string[];
+    isAdmin?: boolean;
   }
 }

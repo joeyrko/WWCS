@@ -15,6 +15,7 @@ type AppToken = {
   id?: string;
   plan?: PlanId;
   purchasedEventSlugs?: string[];
+  isAdmin?: boolean;
 };
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -53,6 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           image: user.image,
           plan: user.plan,
           purchasedEventSlugs: user.purchasedEventSlugs,
+          isAdmin: user.isAdmin,
         };
       },
     }),
@@ -77,6 +79,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         user.id = dbUser.id;
         user.plan = dbUser.plan;
         user.purchasedEventSlugs = dbUser.purchasedEventSlugs;
+        user.isAdmin = dbUser.isAdmin;
       }
       return true;
     },
@@ -86,12 +89,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         t.id = user.id;
         t.plan = user.plan ?? "free";
         t.purchasedEventSlugs = user.purchasedEventSlugs ?? [];
+        t.isAdmin = user.isAdmin ?? false;
       } else if (t.id) {
-        // Refresh plan/purchases from the store on subsequent requests
+        // Refresh plan/purchases/role from the store on subsequent requests
         const dbUser = await findUserById(t.id);
         if (dbUser) {
           t.plan = dbUser.plan;
           t.purchasedEventSlugs = dbUser.purchasedEventSlugs;
+          t.isAdmin = dbUser.isAdmin ?? false;
         }
       }
       return t;
@@ -102,6 +107,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = t.id ?? "";
         session.user.plan = t.plan ?? "free";
         session.user.purchasedEventSlugs = t.purchasedEventSlugs ?? [];
+        session.user.isAdmin = t.isAdmin ?? false;
       }
       return session;
     },

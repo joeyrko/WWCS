@@ -30,6 +30,15 @@ export const users: MockUser[] = [
     plan: "free",
     purchasedEventSlugs: [],
   },
+  {
+    id: "u4",
+    name: "WWC Admin",
+    email: "admin@wwc.tv",
+    passwordHash: bcrypt.hashSync("qualitycontrol", 10),
+    plan: "annual",
+    purchasedEventSlugs: [],
+    isAdmin: true,
+  },
 ];
 
 export const orders: Order[] = [

@@ -80,6 +80,17 @@ export async function addOrder(order: Order): Promise<void> {
   orders.push(order);
 }
 
+// Admin-only reads — callers are responsible for verifying isAdmin first.
+export async function getAllUsers(): Promise<MockUser[]> {
+  return users;
+}
+
+export async function getAllOrders(): Promise<Order[]> {
+  return [...orders].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
 const PLAN_RANK: Record<PlanId, number> = { free: 0, monthly: 1, annual: 1 };
 
 // Accepts anything with the shape of a mock user's plan/purchase fields —

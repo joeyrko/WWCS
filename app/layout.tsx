@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { AdminShortcut } from "@/components/admin/admin-shortcut";
 import "./globals.css";
 
 const anton = Anton({
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${anton.variable} ${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-wwc-black text-wwc-white">
         <SessionProvider>
+          <AdminShortcut />
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />

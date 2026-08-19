@@ -41,14 +41,35 @@ variables").
 
 ### Demo accounts (credentials sign-in)
 
-The user store is in-memory and seeded with three accounts — no sign-up required to explore
+The user store is in-memory and seeded with four accounts — no sign-up required to explore
 gated content:
 
-| Email               | Password      | Plan          |
-| ------------------- | ------------- | ------------- |
-| `fan@wwc.tv`         | `wrestlemania` | WWC+ Monthly  |
-| `champion@wwc.tv`    | `championship` | WWC+ Annual   |
-| `rookie@wwc.tv`      | `firstmatch`   | Free          |
+| Email               | Password        | Plan          |
+| ------------------- | --------------- | ------------- |
+| `fan@wwc.tv`         | `wrestlemania`   | WWC+ Monthly  |
+| `champion@wwc.tv`    | `championship`   | WWC+ Annual   |
+| `rookie@wwc.tv`      | `firstmatch`     | Free          |
+| `admin@wwc.tv`       | `qualitycontrol` | WWC+ Annual (admin) |
+
+### Admin / QC dashboard
+
+Signing in as `admin@wwc.tv` (or any user with `isAdmin: true` in
+[`data/users.ts`](data/users.ts)) unlocks a hidden read-only dashboard at `/admin` — a
+site-wide overview of users, orders, revenue, and content for spot-checking data integrity.
+It isn't linked anywhere in the UI; reach it either by navigating to `/admin` directly, or via
+the global **Ctrl+Alt+A** shortcut (see [`components/admin/admin-shortcut.tsx`](components/admin/admin-shortcut.tsx)),
+which silently does nothing for non-admins.
+
+Two factors guard the dashboard itself, both enforced server-side:
+
+1. **Account** — the page calls `notFound()` for anyone whose session isn't flagged admin, so
+   the gate holds even if the shortcut or URL leaks.
+2. **PIN** — admins who pass that check still land on a 6-digit PIN entry screen
+   ([`components/admin/admin-pin-gate.tsx`](components/admin/admin-pin-gate.tsx)) before the
+   dashboard renders. The PIN is `062714` by default (see `ADMIN_PIN` in `.env.example`) and is
+   checked server-side in [`app/api/admin/verify-pin/route.ts`](app/api/admin/verify-pin/route.ts),
+   which sets an httpOnly cookie valid for 1 hour on success. Set a real `ADMIN_PIN` in
+   production — the `062714` fallback lives in source and isn't a secret once deployed.
 
 Google sign-in works once `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` are set (see below).
 

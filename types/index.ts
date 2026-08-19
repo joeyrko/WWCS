@@ -87,4 +87,5 @@ export interface MockUser {
   image?: string;
   plan: PlanId;
   purchasedEventSlugs: string[];
+  isAdmin?: boolean;
 }
