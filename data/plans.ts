@@ -26,7 +26,6 @@ export const plans: Plan[] = [
       "Equivalent to $5.83 a month",
       "Cancel anytime",
     ],
-    highlighted: true,
     stripePriceEnvVar: "STRIPE_PRICE_ANNUAL",
   },
   {
@@ -41,6 +40,8 @@ export const plans: Plan[] = [
       "One photo with your favorite wrestler per event",
       "Cancel anytime",
     ],
+    highlighted: true,
+    badgeLabel: "Best Value",
     stripePriceEnvVar: "STRIPE_PRICE_LEGACY",
   },
 ];

@@ -24,9 +24,9 @@ export default async function GatePage() {
         aria-hidden
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(224,20,26,0.24),transparent)]"
       />
-      <div className="clip-diagonal absolute inset-x-0 top-0 -z-20 h-[70vh] bg-gradient-to-br from-wwc-red-dark/25 via-wwc-black to-wwc-black" />
+      <div className="clip-diagonal absolute inset-x-0 top-0 -z-20 h-[80vh] bg-gradient-to-br from-wwc-red-dark/25 via-wwc-black to-wwc-black" />
 
-      <section className="mx-auto max-w-5xl px-4 pb-10 pt-16 text-center sm:px-6 sm:pt-24 lg:px-8">
+      <section className="mx-auto flex min-h-[80vh] max-w-5xl flex-col justify-center px-4 pb-10 pt-24 text-center sm:px-6 sm:pt-32 lg:px-8">
         <StaggerIn>
           <span className="mb-4 inline-block rounded-sm border border-wwc-red/50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wwc-red">
             WWC+ Streaming Platform
@@ -77,7 +77,7 @@ export default async function GatePage() {
               >
                 {plan.highlighted && (
                   <span className="mb-3 w-fit rounded-sm bg-wwc-red px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
-                    Most Popular
+                    {plan.badgeLabel ?? "Most Popular"}
                   </span>
                 )}
                 <h2 className="font-display text-2xl uppercase tracking-wide text-white">

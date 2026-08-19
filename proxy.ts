@@ -19,7 +19,9 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    // Everything except API routes, Next internals, and static assets.
-    "/((?!api|_next/static|_next/image|favicon.ico|mock-media).*)",
+    // Everything except API routes, Next internals, and static assets
+    // (anything under mock-media/ or a file with a static extension, e.g.
+    // logos and other images placed directly in public/).
+    "/((?!api|_next/static|_next/image|favicon.ico|mock-media|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|css|js|map)$).*)",
   ],
 };

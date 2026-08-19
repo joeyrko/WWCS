@@ -69,6 +69,7 @@ export interface Plan {
   tagline: string;
   features: string[];
   highlighted?: boolean;
+  badgeLabel?: string;
   stripePriceEnvVar?: string;
 }
 
