@@ -1,5 +1,5 @@
 export const NAV_LINKS = [
-  { href: "/events", label: "Events" },
-  { href: "/watch", label: "Watch" },
+  { href: "/events", label: "Home" },
+  { href: "/watch", label: "History" },
   { href: "/", label: "Pricing" },
 ] as const;
