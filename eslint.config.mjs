@@ -12,8 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Plain Node entry point — not run through the Next.js compiler.
+    // Plain Node entry points — not run through the Next.js compiler.
     "server.js",
+    "app.js",
   ]),
 ]);
 
