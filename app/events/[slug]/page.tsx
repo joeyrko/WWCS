@@ -5,10 +5,12 @@ import { Calendar, MapPin } from "lucide-react";
 import { getSession } from "@/lib/get-session";
 import { events } from "@/data/events";
 import { getEventBySlug } from "@/lib/data/events";
+import { getVideoByEventSlug } from "@/lib/data/videos";
 import { userHasAccessToEvent } from "@/lib/data/users";
 import { Countdown } from "@/components/shared/countdown";
 import { LiveBadge } from "@/components/shared/live-badge";
 import { Badge } from "@/components/ui/badge";
+import { Poster } from "@/components/media/poster";
 import { MatchCardList } from "@/components/events/match-card-list";
 import { EventAccessPanel } from "@/components/events/event-access-panel";
 import { formatDate } from "@/lib/utils";
@@ -42,17 +44,28 @@ export default async function EventDetailPage({
   const event = await getEventBySlug(slug);
   if (!event) notFound();
 
-  const session = await getSession();
+  const [session, replay] = await Promise.all([getSession(), getVideoByEventSlug(event.slug)]);
   const hasAccess = userHasAccessToEvent(session?.user, event);
 
   return (
     <>
-      <section className="relative overflow-hidden border-b border-wwc-grey-900 bg-wwc-grey-950 py-14 sm:py-20">
+      <section className="relative overflow-hidden border-b border-wwc-grey-900">
+        <Poster
+          seed={event.slug}
+          title={event.title}
+          showLabel={false}
+          monogram={false}
+          className="absolute inset-0 -z-20 rounded-none"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-t from-wwc-black via-wwc-black/85 to-wwc-black/40"
+        />
         <div
           aria-hidden
           className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_60%_at_50%_-10%,rgba(224,20,26,0.22),transparent)]"
         />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 pb-14 pt-28 sm:px-6 sm:pb-20 sm:pt-40 lg:px-8">
           <div className="mb-4 flex flex-wrap items-center gap-2">
             {event.status === "live" && <LiveBadge />}
             {event.includedInSubscription ? (
@@ -85,7 +98,12 @@ export default async function EventDetailPage({
           )}
 
           <div className="mt-8">
-            <EventAccessPanel event={event} hasAccess={hasAccess} isSignedIn={!!session?.user} />
+            <EventAccessPanel
+              event={event}
+              hasAccess={hasAccess}
+              isSignedIn={!!session?.user}
+              replaySlug={replay?.slug}
+            />
           </div>
         </div>
       </section>

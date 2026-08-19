@@ -22,35 +22,36 @@ export function VideoCard({ video, className }: { video: Video; className?: stri
   return (
     <Link
       href={`/watch/${video.slug}`}
-      className={`glow-red group flex w-full flex-col overflow-hidden rounded-md border border-wwc-grey-800 bg-wwc-grey-950 transition-transform duration-200 hover:-translate-y-1 ${className ?? ""}`}
+      className={`group relative block w-full ${className ?? ""}`}
     >
-      <div className="relative">
-        <Poster
-          seed={video.slug}
-          title={video.title}
-          aspect="video"
-          monogram={false}
-          showLabel={false}
-        />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-opacity duration-200 group-hover:bg-black/30 group-hover:opacity-100">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-wwc-red/90 text-wwc-white">
-            <Play className="ml-0.5 h-5 w-5 fill-current" />
+      <div className="relative z-0 transition-transform duration-300 ease-out group-hover:z-20 group-hover:scale-105">
+        <div className="relative overflow-hidden rounded-sm shadow-lg shadow-black/50">
+          <Poster
+            seed={video.slug}
+            title={video.title}
+            aspect="video"
+            monogram={false}
+            showLabel={false}
+          />
+          <div className="absolute left-2 top-2">
+            <AccessBadge access={video.access} />
+          </div>
+          <span className="absolute bottom-2 right-2 rounded-sm bg-black/80 px-1.5 py-0.5 text-[11px] font-semibold text-white">
+            {formatDuration(video.durationSeconds)}
           </span>
+
+          <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black via-black/75 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <span className="mb-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-white text-black">
+              <Play className="ml-0.5 h-3.5 w-3.5 fill-current" />
+            </span>
+            <span className="text-[10px] font-semibold uppercase tracking-wide text-wwc-red">
+              {SHOW_TYPE_LABEL[video.showType]}
+            </span>
+            <h3 className="line-clamp-2 font-display text-sm uppercase leading-tight tracking-wide text-white">
+              {video.title}
+            </h3>
+          </div>
         </div>
-        <span className="absolute bottom-2 right-2 rounded-sm bg-black/80 px-1.5 py-0.5 text-[11px] font-semibold text-white">
-          {formatDuration(video.durationSeconds)}
-        </span>
-        <div className="absolute left-2 top-2">
-          <AccessBadge access={video.access} />
-        </div>
-      </div>
-      <div className="flex flex-1 flex-col gap-1 p-3.5">
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-wwc-red">
-          {SHOW_TYPE_LABEL[video.showType]}
-        </span>
-        <h3 className="line-clamp-2 font-display text-base uppercase leading-tight tracking-wide text-wwc-white transition-colors group-hover:text-wwc-red">
-          {video.title}
-        </h3>
       </div>
     </Link>
   );

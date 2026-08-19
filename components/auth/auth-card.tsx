@@ -10,7 +10,7 @@ export function AuthCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-16">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-16">
       <div
         aria-hidden
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(224,20,26,0.16),transparent)]"

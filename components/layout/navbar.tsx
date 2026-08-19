@@ -4,6 +4,7 @@ import { NavLinksDesktop } from "@/components/layout/nav-links-desktop";
 import { SearchBar } from "@/components/layout/search-bar";
 import { AuthNav } from "@/components/layout/auth-nav";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { NavbarShell } from "@/components/layout/navbar-shell";
 
 export async function Navbar() {
   const session = await getSession();
@@ -17,7 +18,7 @@ export async function Navbar() {
     : null;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-wwc-grey-900 bg-wwc-black/90 backdrop-blur-md">
+    <NavbarShell>
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           <Logo />
@@ -29,6 +30,6 @@ export async function Navbar() {
           <MobileNav user={user} />
         </div>
       </div>
-    </header>
+    </NavbarShell>
   );
 }

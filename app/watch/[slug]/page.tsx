@@ -51,8 +51,8 @@ export default async function WatchDetailPage({
   const hasAccess = userHasAccessToVideo(session?.user, video);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <div>
+    <div className="pt-24 sm:pt-28">
+      <div className="mx-auto max-w-4xl px-4 pb-10 sm:px-6 lg:px-8">
         {hasAccess ? (
             <VideoPlayer src={video.videoUrl} title={video.title} seed={video.slug} />
           ) : (
@@ -95,7 +95,7 @@ export default async function WatchDetailPage({
           )}
       </div>
 
-      <div className="mt-14 border-t border-wwc-grey-900 pt-10">
+      <div className="mt-4 border-t border-wwc-grey-900 pt-10">
         <RelatedVideosRail videos={related} />
       </div>
     </div>

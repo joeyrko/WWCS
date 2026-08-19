@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/shared/checkout-button";
 import type { WwcEvent } from "@/types";
@@ -8,11 +8,25 @@ export function EventAccessPanel({
   event,
   hasAccess,
   isSignedIn,
+  replaySlug,
 }: {
   event: WwcEvent;
   hasAccess: boolean;
   isSignedIn: boolean;
+  replaySlug?: string;
 }) {
+  if (hasAccess && event.status === "past") {
+    return (
+      <div className="flex flex-wrap items-center gap-4">
+        <Button asChild size="lg">
+          <Link href={replaySlug ? `/watch/${replaySlug}` : "/watch"} className="flex items-center gap-2">
+            <PlayCircle className="h-5 w-5" /> Watch Replay
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
   if (event.includedInSubscription) {
     if (hasAccess) {
       return (
@@ -24,7 +38,7 @@ export function EventAccessPanel({
     }
     return (
       <Button asChild size="lg">
-        <Link href="/pricing">Subscribe to Watch</Link>
+        <Link href="/">Subscribe to Watch</Link>
       </Button>
     );
   }
