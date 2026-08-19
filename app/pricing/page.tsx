@@ -5,6 +5,7 @@ import { getSession } from "@/lib/get-session";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/shared/checkout-button";
+import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { getAllPlans } from "@/lib/data/plans";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ export default async function PricingPage() {
       />
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-6 md:grid-cols-3">
+        <StaggerGrid className="grid gap-6 md:grid-cols-3">
           {plans.map((plan) => {
             const isCurrent = currentPlan === plan.id;
             return (
@@ -90,7 +91,7 @@ export default async function PricingPage() {
               </div>
             );
           })}
-        </div>
+        </StaggerGrid>
 
         <p className="mt-10 text-center text-sm text-wwc-grey-500">
           Prices in USD. Cancel your subscription anytime from your account dashboard. PPV events

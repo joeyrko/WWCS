@@ -23,6 +23,7 @@ interface PosterProps {
   aspect?: "poster" | "video" | "square";
   className?: string;
   monogram?: boolean;
+  showLabel?: boolean;
 }
 
 export function Poster({
@@ -32,6 +33,7 @@ export function Poster({
   aspect = "poster",
   className,
   monogram = true,
+  showLabel = true,
 }: PosterProps) {
   const gradient = GRADIENTS[hashSeed(seed) % GRADIENTS.length];
   const aspectClass =
@@ -39,6 +41,10 @@ export function Poster({
 
   return (
     <div
+      // When the title is shown as real text elsewhere in the card, this
+      // gradient is purely decorative — hide it from screen readers instead
+      // of announcing the title twice.
+      aria-hidden={showLabel ? undefined : true}
       className={cn(
         "relative flex items-end overflow-hidden rounded-sm bg-gradient-to-br",
         gradient,
@@ -53,12 +59,14 @@ export function Poster({
           WWC
         </span>
       )}
-      <div className="relative z-10 p-3">
-        <p className="line-clamp-3 font-display text-base uppercase leading-tight tracking-wide text-white">
-          {title}
-        </p>
-        {subtitle && <p className="mt-1 line-clamp-1 text-xs text-white/70">{subtitle}</p>}
-      </div>
+      {showLabel && (
+        <div className="relative z-10 p-3">
+          <p className="line-clamp-3 font-display text-base uppercase leading-tight tracking-wide text-white">
+            {title}
+          </p>
+          {subtitle && <p className="mt-1 line-clamp-1 text-xs text-white/70">{subtitle}</p>}
+        </div>
+      )}
     </div>
   );
 }

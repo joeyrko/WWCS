@@ -25,7 +25,13 @@ export function VideoCard({ video, className }: { video: Video; className?: stri
       className={`glow-red group flex w-full flex-col overflow-hidden rounded-md border border-wwc-grey-800 bg-wwc-grey-950 transition-transform duration-200 hover:-translate-y-1 ${className ?? ""}`}
     >
       <div className="relative">
-        <Poster seed={video.slug} title={video.title} aspect="video" monogram={false} />
+        <Poster
+          seed={video.slug}
+          title={video.title}
+          aspect="video"
+          monogram={false}
+          showLabel={false}
+        />
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-opacity duration-200 group-hover:bg-black/30 group-hover:opacity-100">
           <span className="flex h-11 w-11 items-center justify-center rounded-full bg-wwc-red/90 text-wwc-white">
             <Play className="ml-0.5 h-5 w-5 fill-current" />

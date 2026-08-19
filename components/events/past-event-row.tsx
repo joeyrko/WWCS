@@ -16,6 +16,7 @@ export async function PastEventRow({ event }: { event: WwcEvent }) {
         title={event.title}
         aspect="video"
         monogram={false}
+        showLabel={false}
         className="w-full sm:w-56"
       />
       <div className="flex flex-1 flex-col gap-1.5">

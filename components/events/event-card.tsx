@@ -21,7 +21,13 @@ export function EventCard({ event }: { event: WwcEvent }) {
       className="glow-red group flex flex-col overflow-hidden rounded-md border border-wwc-grey-800 bg-wwc-grey-950 transition-transform duration-200 hover:-translate-y-1"
     >
       <div className="relative">
-        <Poster seed={event.slug} title={event.title} subtitle={event.tagline} aspect="video" />
+        <Poster
+          seed={event.slug}
+          title={event.title}
+          subtitle={event.tagline}
+          aspect="video"
+          showLabel={false}
+        />
         <div className="absolute left-3 top-3 flex gap-2">
           {event.status === "live" && <LiveBadge />}
           {event.includedInSubscription ? (

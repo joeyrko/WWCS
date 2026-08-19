@@ -3,6 +3,7 @@ import { SearchX } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { FiltersBar } from "@/components/watch/filters-bar";
 import { VideoCard } from "@/components/watch/video-card";
+import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { searchVideos, type VideoFilters } from "@/lib/data/videos";
 import { getAllWrestlers } from "@/lib/data/wrestlers";
 
@@ -53,11 +54,11 @@ export default async function WatchPage({
         </div>
 
         {videos.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <StaggerGrid className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {videos.map((video) => (
               <VideoCard key={video.id} video={video} />
             ))}
-          </div>
+          </StaggerGrid>
         ) : (
           <div className="flex flex-col items-center gap-3 rounded-md border border-dashed border-wwc-grey-800 py-20 text-center">
             <SearchX className="h-10 w-10 text-wwc-grey-600" />

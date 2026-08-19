@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StaggerGrid } from "@/components/motion/stagger-grid";
+import { Reveal } from "@/components/motion/reveal";
 import { getAllPlans } from "@/lib/data/plans";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +16,7 @@ export async function PlansTeaser() {
         className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(224,20,26,0.14),transparent)]"
       />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
+        <Reveal className="mb-12 text-center">
           <h2 className="font-display text-3xl uppercase tracking-wide text-white sm:text-4xl">
             One Membership. Every Show.
           </h2>
@@ -22,9 +24,9 @@ export async function PlansTeaser() {
             Join WWC+ for the full on-demand library and every included live event — or pay only
             for the PPVs you want.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <StaggerGrid className="grid gap-6 md:grid-cols-3">
           {plans.map((plan) => (
             <div
               key={plan.id}
@@ -71,7 +73,7 @@ export async function PlansTeaser() {
               </Button>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

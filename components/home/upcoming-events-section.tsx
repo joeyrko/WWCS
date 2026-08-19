@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { EventCard } from "@/components/events/event-card";
+import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { getUpcomingEvents } from "@/lib/data/events";
 
 export async function UpcomingEventsSection() {
@@ -23,11 +24,11 @@ export async function UpcomingEventsSection() {
         </Link>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <StaggerGrid className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {events.map((event) => (
           <EventCard key={event.id} event={event} />
         ))}
-      </div>
+      </StaggerGrid>
 
       <Link
         href="/events"

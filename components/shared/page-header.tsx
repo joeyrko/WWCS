@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { StaggerIn } from "@/components/motion/stagger-in";
 
 export function PageHeader({
   eyebrow,
@@ -22,7 +23,7 @@ export function PageHeader({
         aria-hidden
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,rgba(224,20,26,0.18),transparent)]"
       />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <StaggerIn className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {eyebrow && (
           <span className="mb-3 inline-block rounded-sm border border-wwc-red/50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wwc-red">
             {eyebrow}
@@ -32,7 +33,7 @@ export function PageHeader({
           {title}
         </h1>
         {description && <p className="mt-3 max-w-2xl text-wwc-grey-400">{description}</p>}
-      </div>
+      </StaggerIn>
     </section>
   );
 }

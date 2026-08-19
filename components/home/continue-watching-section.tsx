@@ -1,6 +1,7 @@
 import { getSession } from "@/lib/get-session";
 import { getTrendingVideos } from "@/lib/data/videos";
 import { VideoCard } from "@/components/watch/video-card";
+import { StaggerGrid } from "@/components/motion/stagger-grid";
 
 export async function ContinueWatchingSection() {
   const session = await getSession();
@@ -19,11 +20,14 @@ export async function ContinueWatchingSection() {
         </p>
       </div>
 
-      <div className="scrollbar-none -mx-4 flex gap-4 overflow-x-auto px-4 pb-2">
+      <StaggerGrid
+        className="scrollbar-none -mx-4 flex gap-4 overflow-x-auto px-4 pb-2"
+        itemClassName="w-64 shrink-0 sm:w-72"
+      >
         {videos.map((video) => (
-          <VideoCard key={video.id} video={video} className="w-64 shrink-0 sm:w-72" />
+          <VideoCard key={video.id} video={video} />
         ))}
-      </div>
+      </StaggerGrid>
     </section>
   );
 }
