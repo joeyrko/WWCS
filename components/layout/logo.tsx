@@ -13,11 +13,8 @@ export function Logo({ className }: { className?: string }) {
         priority
         className="h-9 w-auto shrink-0 transition-transform duration-200 group-hover:scale-105"
       />
-      <span className="flex flex-col items-center leading-none">
-        <span className="font-display text-xl tracking-wide text-wwc-white">WWC+</span>
-        <span className="hidden text-[9px] font-semibold uppercase tracking-[0.2em] text-wwc-grey-400 sm:block">
-          World Wrestling Council
-        </span>
+      <span className="hidden text-[10px] font-semibold uppercase tracking-[0.2em] text-wwc-grey-400 sm:block">
+        World Wrestling Council
       </span>
     </Link>
   );

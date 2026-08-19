@@ -14,7 +14,11 @@ export function AdminShortcut() {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (!event.ctrlKey || !event.altKey || event.key.toLowerCase() !== "a") return;
+      // Check the physical key (event.code) as well as event.key: on AltGr
+      // layouts (e.g. Spanish/Latin American keyboards, where Ctrl+Alt is
+      // AltGr) "key" can report something other than "a" for this combo.
+      const isAKey = event.code === "KeyA" || event.key.toLowerCase() === "a";
+      if (!event.ctrlKey || !event.altKey || !isAKey) return;
 
       const target = event.target as HTMLElement | null;
       const isTyping =
