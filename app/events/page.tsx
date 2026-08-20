@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
 import { EventCard } from "@/components/events/event-card";
 import { ContentRow } from "@/components/shared/content-row";
-import { SponsorSlideshow } from "@/components/events/sponsor-slideshow";
+import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
 import { Reveal } from "@/components/motion/reveal";
 import { getPastEvents, getUpcomingEvents } from "@/lib/data/events";
 import { sponsors } from "@/data/sponsors";
 
 export const metadata: Metadata = {
-  title: "Live Events & PPV",
+  title: "Live Events",
   description: "Every upcoming WWC live pay-per-view event, plus replays of past shows.",
 };
 
@@ -21,8 +21,10 @@ export default async function EventsPage() {
     <>
       <PageHeader
         eyebrow="Events Hub"
-        title="Live Events & PPV"
-        description="Every upcoming WWC show — live, included, or pay-per-view. Never miss a night."
+        title="Live Events"
+        description="Every upcoming WWC show — live, Never miss a Moment"
+        centered
+        className="border-transparent bg-transparent"
       />
 
       <div className="flex flex-col gap-10 py-10 sm:py-14">

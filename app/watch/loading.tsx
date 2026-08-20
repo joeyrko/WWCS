@@ -8,7 +8,9 @@ export default function WatchLoading() {
       <PageHeader
         eyebrow="On-Demand"
         title="Watch Library"
-        description="Full shows, full matches, and highlights — anytime."
+        description="Full shows— anytime."
+        centered
+        className="border-transparent bg-transparent"
       />
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

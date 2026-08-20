@@ -6,11 +6,13 @@ export function PageHeader({
   title,
   description,
   className,
+  centered = false,
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   className?: string;
+  centered?: boolean;
 }) {
   return (
     <section
@@ -23,7 +25,12 @@ export function PageHeader({
         aria-hidden
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,rgba(224,20,26,0.18),transparent)]"
       />
-      <StaggerIn className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <StaggerIn
+        className={cn(
+          "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8",
+          centered && "flex flex-col items-center text-center"
+        )}
+      >
         {eyebrow && (
           <span className="mb-3 inline-block rounded-sm border border-wwc-red/50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wwc-red">
             {eyebrow}

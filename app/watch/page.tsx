@@ -4,10 +4,11 @@ import { PageHeader } from "@/components/shared/page-header";
 import { FiltersBar } from "@/components/watch/filters-bar";
 import { VideoCard } from "@/components/watch/video-card";
 import { ContentRow } from "@/components/shared/content-row";
+import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
 import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { Reveal } from "@/components/motion/reveal";
 import { getAllVideos, searchVideos, type VideoFilters } from "@/lib/data/videos";
-import { getAllWrestlers } from "@/lib/data/wrestlers";
+import { sponsors } from "@/data/sponsors";
 import type { Video } from "@/types";
 
 export const metadata: Metadata = {
@@ -38,21 +39,18 @@ export default async function WatchPage({
   const sort = firstValue(params.sort) || "newest";
   const hasActiveFilters = Boolean(q) || type !== "all" || wrestler !== "all";
 
-  const wrestlers = await getAllWrestlers();
-
   return (
     <>
       <PageHeader
         eyebrow="On-Demand"
         title="Watch Library"
-        description="Full shows, full matches, and highlights — anytime."
+        description="Full shows— anytime."
+        centered
+        className="border-transparent bg-transparent"
       />
 
       <div className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
-        <FiltersBar
-          wrestlers={wrestlers.map((w) => ({ slug: w.slug, name: w.name }))}
-          current={{ q, type, wrestler, sort }}
-        />
+        <FiltersBar current={{ q, type, wrestler, sort }} />
       </div>
 
       {hasActiveFilters ? (
@@ -60,6 +58,15 @@ export default async function WatchPage({
       ) : (
         <BrowseRows />
       )}
+
+      <Reveal>
+        <div className="pb-10 sm:pb-14">
+          <h2 className="mb-4 px-4 font-display text-2xl uppercase tracking-wide text-white sm:px-6 lg:px-8">
+            Our Sponsors
+          </h2>
+          <SponsorSlideshow sponsors={sponsors} />
+        </div>
+      </Reveal>
     </>
   );
 }
