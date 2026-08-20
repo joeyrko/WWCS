@@ -32,7 +32,16 @@ export async function POST(request: Request) {
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
-  await sendPasswordResetEmail(parsed.data.email, new URL(relativeUrl, appUrl).toString());
+
+  try {
+    await sendPasswordResetEmail(parsed.data.email, new URL(relativeUrl, appUrl).toString());
+  } catch (err) {
+    // Delivery failed (e.g. Resend domain not verified yet) — the token is
+    // still valid, so fall back to showing the link directly rather than
+    // leaving the user with no way to actually reset their password.
+    console.error("Failed to send password reset email:", err);
+    return NextResponse.json({ resetUrl: relativeUrl });
+  }
 
   return NextResponse.json({ emailSent: true });
 }

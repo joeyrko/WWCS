@@ -12,7 +12,11 @@ const FROM_ADDRESS = process.env.RESEND_FROM_EMAIL || "WWC+ <onboarding@resend.d
 export async function sendPasswordResetEmail(to: string, resetUrl: string): Promise<void> {
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  await resend.emails.send({
+  // The SDK returns { data, error } instead of throwing for API-level
+  // failures (e.g. unverified domain, restricted recipient in test mode) —
+  // an unchecked `error` here would silently report success on a send that
+  // never actually went out.
+  const { error } = await resend.emails.send({
     from: FROM_ADDRESS,
     to,
     subject: "Reset your WWC+ password",
@@ -29,4 +33,8 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
       </div>
     `,
   });
+
+  if (error) {
+    throw new Error(error.message ?? "Resend rejected the email.");
+  }
 }
