@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+type Result = { kind: "demo"; resetUrl: string } | { kind: "sent" };
+
 export function ForgotPasswordForm() {
   const [loading, setLoading] = useState(false);
-  const [resetUrl, setResetUrl] = useState<string | null>(null);
+  const [result, setResult] = useState<Result | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,7 +31,7 @@ export function ForgotPasswordForm() {
         return;
       }
 
-      setResetUrl(data.resetUrl);
+      setResult(data.resetUrl ? { kind: "demo", resetUrl: data.resetUrl } : { kind: "sent" });
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -37,17 +39,36 @@ export function ForgotPasswordForm() {
     }
   }
 
-  if (resetUrl) {
+  if (result?.kind === "sent") {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="rounded-sm border border-wwc-red/40 bg-wwc-red/10 p-4 text-sm">
+          <p className="font-semibold text-white">Check your email.</p>
+          <p className="mt-1 text-wwc-grey-300">
+            If an account exists for that address, we&apos;ve sent a link to reset your password.
+            It expires in 30 minutes.
+          </p>
+        </div>
+        <p className="text-center text-sm text-wwc-grey-500">
+          <Link href="/sign-in" className="font-semibold text-wwc-red hover:underline">
+            Back to sign in
+          </Link>
+        </p>
+      </div>
+    );
+  }
+
+  if (result?.kind === "demo") {
     return (
       <div className="flex flex-col gap-4">
         <div className="rounded-sm border border-wwc-red/40 bg-wwc-red/10 p-4 text-sm">
           <p className="font-semibold text-white">This is a demo — no email was actually sent.</p>
           <p className="mt-1 text-wwc-grey-300">Use this link to reset your password:</p>
           <Link
-            href={resetUrl}
+            href={result.resetUrl}
             className="mt-2 block break-all font-semibold text-wwc-red hover:underline"
           >
-            {resetUrl}
+            {result.resetUrl}
           </Link>
         </div>
         <p className="text-center text-sm text-wwc-grey-500">

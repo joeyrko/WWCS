@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createPasswordResetToken } from "@/lib/data/users";
+import { emailIsConfigured, sendPasswordResetEmail } from "@/lib/email";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Enter a valid email address."),
@@ -22,5 +23,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No account found with that email." }, { status: 404 });
   }
 
-  return NextResponse.json({ resetUrl: `/reset-password?token=${token}` });
+  const relativeUrl = `/reset-password?token=${token}`;
+
+  if (!emailIsConfigured()) {
+    // No email provider configured (e.g. local dev) — hand the link straight
+    // back so the UI can show it directly instead of pretending to send it.
+    return NextResponse.json({ resetUrl: relativeUrl });
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
+  await sendPasswordResetEmail(parsed.data.email, new URL(relativeUrl, appUrl).toString());
+
+  return NextResponse.json({ emailSent: true });
 }
