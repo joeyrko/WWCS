@@ -13,16 +13,27 @@ const PUBLIC_PATHS = new Set([
   "/manifest.webmanifest",
 ]);
 
+// Reachable even by a signed-in user with no active plan — must include
+// /pricing itself (otherwise there'd be no way to ever reach it).
+const PLAN_EXEMPT_PATHS = new Set([...PUBLIC_PATHS, "/pricing"]);
+
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
-  if (req.auth || PUBLIC_PATHS.has(pathname)) {
-    return NextResponse.next();
+  if (!req.auth) {
+    if (PUBLIC_PATHS.has(pathname)) return NextResponse.next();
+    const url = new URL("/sign-in", req.nextUrl.origin);
+    url.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(url);
   }
 
-  const url = new URL("/sign-in", req.nextUrl.origin);
-  url.searchParams.set("callbackUrl", pathname);
-  return NextResponse.redirect(url);
+  // Signed in but no active plan — block browsing the rest of the site
+  // until a plan is chosen, instead of only gating individual videos/events.
+  if (!req.auth.user.plan && !PLAN_EXEMPT_PATHS.has(pathname)) {
+    return NextResponse.redirect(new URL("/pricing", req.nextUrl.origin));
+  }
+
+  return NextResponse.next();
 });
 
 export const config = {

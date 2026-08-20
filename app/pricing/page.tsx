@@ -44,13 +44,15 @@ export default async function PricingPage() {
             Council — anytime, anywhere. Pick a plan to get started.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Button asChild size="lg">
-              <Link href="/events" className="flex items-center gap-2">
-                <PlayCircle className="h-5 w-5" /> Enter WWC+
-              </Link>
-            </Button>
-          </div>
+          {session.user.plan && (
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <Button asChild size="lg">
+                <Link href="/events" className="flex items-center gap-2">
+                  <PlayCircle className="h-5 w-5" /> Enter WWC+
+                </Link>
+              </Button>
+            </div>
+          )}
         </StaggerIn>
       </section>
 
