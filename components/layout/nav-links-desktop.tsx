@@ -12,7 +12,7 @@ export function NavLinksDesktop({ between }: { between?: React.ReactNode } = {})
   return (
     <nav className="hidden items-center gap-1 md:flex">
       {NAV_LINKS.map((link, i) => {
-        const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+        const active = pathname.startsWith(link.href);
         return (
           <Fragment key={link.href}>
             {i === 1 && between}

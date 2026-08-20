@@ -56,7 +56,7 @@ export function MobileNav({ user }: { user: AuthNavUser | null }) {
 
         <nav className="flex flex-col gap-1">
           {NAV_LINKS.map((link) => {
-            const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+            const active = pathname.startsWith(link.href);
             return (
               <SheetClose asChild key={link.href}>
                 <Link
