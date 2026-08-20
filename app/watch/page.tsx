@@ -6,9 +6,9 @@ import { VideoCard } from "@/components/watch/video-card";
 import { ContentRow } from "@/components/shared/content-row";
 import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { Reveal } from "@/components/motion/reveal";
-import { getAllVideos, getTrendingVideos, searchVideos, type VideoFilters } from "@/lib/data/videos";
+import { getAllVideos, searchVideos, type VideoFilters } from "@/lib/data/videos";
 import { getAllWrestlers } from "@/lib/data/wrestlers";
-import type { ShowType, Video } from "@/types";
+import type { Video } from "@/types";
 
 export const metadata: Metadata = {
   title: "Watch Library",
@@ -20,12 +20,11 @@ function firstValue(value: string | string[] | undefined): string {
   return value ?? "";
 }
 
-const SHOW_TYPE_ROWS: { type: ShowType; title: string }[] = [
-  { type: "ppv", title: "PPV Replays" },
-  { type: "weekly-show", title: "Weekly Shows" },
-  { type: "full-match", title: "Full Matches" },
-  { type: "highlight", title: "Highlights" },
-];
+const DECADES = [1970, 1980, 1990, 2000, 2010];
+
+function decadeOf(publishedAt: string): number {
+  return Math.floor(new Date(publishedAt).getFullYear() / 10) * 10;
+}
 
 export default async function WatchPage({
   searchParams,
@@ -66,30 +65,23 @@ export default async function WatchPage({
 }
 
 async function BrowseRows() {
-  const [trending, all] = await Promise.all([getTrendingVideos(10), getAllVideos()]);
-  const byType = new Map<ShowType, Video[]>();
+  const all = await getAllVideos();
+  const byDecade = new Map<number, Video[]>();
   for (const video of all) {
-    const list = byType.get(video.showType) ?? [];
+    const decade = decadeOf(video.publishedAt);
+    const list = byDecade.get(decade) ?? [];
     list.push(video);
-    byType.set(video.showType, list);
+    byDecade.set(decade, list);
   }
 
   return (
     <div className="flex flex-col gap-10 py-10 sm:py-14">
-      <Reveal>
-        <ContentRow title="Trending Now">
-          {trending.map((video) => (
-            <VideoCard key={video.id} video={video} />
-          ))}
-        </ContentRow>
-      </Reveal>
-
-      {SHOW_TYPE_ROWS.map(({ type, title }) => {
-        const rowVideos = byType.get(type) ?? [];
+      {DECADES.map((decade) => {
+        const rowVideos = byDecade.get(decade) ?? [];
         if (rowVideos.length === 0) return null;
         return (
-          <Reveal key={type}>
-            <ContentRow title={title}>
+          <Reveal key={decade}>
+            <ContentRow title={`${decade}'s`}>
               {rowVideos.map((video) => (
                 <VideoCard key={video.id} video={video} />
               ))}
