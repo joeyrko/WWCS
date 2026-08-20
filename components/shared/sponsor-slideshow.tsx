@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import type { Sponsor } from "@/data/sponsors";
 
@@ -46,6 +47,27 @@ export function SponsorSlideshow({ sponsors }: { sponsors: Sponsor[] }) {
     >
       <div className="relative aspect-[3/1] w-full overflow-hidden rounded-md sm:aspect-[4/1]">
         {sponsors.map((sponsor, i) => {
+          if (sponsor.imageUrl) {
+            return (
+              <div
+                key={sponsor.id}
+                aria-hidden={i !== index}
+                className={cn(
+                  "absolute inset-0 bg-black transition-opacity duration-700 ease-out",
+                  i === index ? "opacity-100" : "opacity-0"
+                )}
+              >
+                <Image
+                  src={sponsor.imageUrl}
+                  alt={sponsor.name}
+                  fill
+                  className="object-contain"
+                  sizes="(min-width: 1280px) 1152px, 100vw"
+                />
+              </div>
+            );
+          }
+
           const gradient = GRADIENTS[hashSeed(sponsor.id) % GRADIENTS.length];
           return (
             <div
