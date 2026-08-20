@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, MapPin, Play } from "lucide-react";
 import { Poster } from "@/components/media/poster";
 import { LiveBadge } from "@/components/shared/live-badge";
 import { formatDate } from "@/lib/utils";
@@ -30,6 +30,9 @@ export function EventCard({ event }: { event: WwcEvent }) {
           )}
 
           <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black via-black/80 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <span className="mb-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-white text-black">
+              <Play className="ml-0.5 h-3.5 w-3.5 fill-current" />
+            </span>
             <h3 className="line-clamp-1 font-display text-sm uppercase leading-tight tracking-wide text-white">
               {event.title}
             </h3>
