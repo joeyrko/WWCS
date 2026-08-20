@@ -44,6 +44,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${anton.variable} ${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-wwc-black text-wwc-white">
+        <div
+          aria-hidden
+          className="fixed inset-0 -z-50 bg-[url('/wwc-hero-bg.jpg')] bg-cover bg-center opacity-[0.08]"
+        />
         <SessionProvider>
           <AdminShortcut />
           <Navbar />
