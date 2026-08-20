@@ -15,11 +15,11 @@ export default async function SignInPage({
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const [{ callbackUrl }, session] = await Promise.all([searchParams, getSession()]);
-  if (session?.user) redirect(callbackUrl ?? "/events");
+  if (session?.user) redirect(callbackUrl ?? "/pricing");
 
   return (
     <AuthCard title="Sign In" subtitle="Welcome back. Let's get you ringside.">
-      <SignInForm callbackUrl={callbackUrl ?? "/events"} />
+      <SignInForm callbackUrl={callbackUrl ?? "/pricing"} />
     </AuthCard>
   );
 }

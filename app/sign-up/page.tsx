@@ -15,7 +15,7 @@ export default async function SignUpPage({
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const [{ callbackUrl }, session] = await Promise.all([searchParams, getSession()]);
-  if (session?.user) redirect(callbackUrl ?? "/events");
+  if (session?.user) redirect(callbackUrl ?? "/pricing");
 
   return (
     <AuthCard title="Create Account" subtitle="Create your account, then choose a plan to get in.">
