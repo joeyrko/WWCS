@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Calendar, MapPin } from "lucide-react";
 import { Poster } from "@/components/media/poster";
 import { LiveBadge } from "@/components/shared/live-badge";
-import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { getWrestlerBySlug } from "@/data/wrestlers";
 import type { WwcEvent } from "@/types";
@@ -24,14 +23,11 @@ export function EventCard({ event }: { event: WwcEvent }) {
             aspect="video"
             showLabel={false}
           />
-          <div className="absolute left-2 top-2 flex gap-1.5">
-            {event.status === "live" && <LiveBadge />}
-            {event.includedInSubscription ? (
-              <Badge variant="subscribers">Included</Badge>
-            ) : (
-              <Badge variant="purchase">PPV</Badge>
-            )}
-          </div>
+          {event.status === "live" && (
+            <div className="absolute left-2 top-2">
+              <LiveBadge />
+            </div>
+          )}
 
           <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black via-black/80 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <h3 className="line-clamp-1 font-display text-sm uppercase leading-tight tracking-wide text-white">
