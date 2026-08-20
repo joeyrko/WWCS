@@ -11,8 +11,8 @@ export const events: WwcEvent[] = [
     city: "San Juan, Puerto Rico",
     date: "2026-08-29T20:00:00-04:00",
     status: "upcoming",
-    priceInCents: 3999,
-    includedInSubscription: false,
+    priceInCents: 0,
+    includedInSubscription: true,
     description:
       "The road to the WWC World Heavyweight Championship runs through chaos. Thirty superstars enter, one leaves as the number-one contender — and the champion has a front-row seat.",
     matchCard: [
@@ -89,8 +89,8 @@ export const events: WwcEvent[] = [
     city: "Ponce, Puerto Rico",
     date: "2026-09-26T19:30:00-04:00",
     status: "upcoming",
-    priceInCents: 2999,
-    includedInSubscription: false,
+    priceInCents: 0,
+    includedInSubscription: true,
     description:
       "A number-one contender is crowned and old scores get settled under the lights of Ponce.",
     matchCard: [
@@ -147,8 +147,8 @@ export const events: WwcEvent[] = [
     city: "Caguas, Puerto Rico",
     date: "2026-10-24T20:00:00-04:00",
     status: "upcoming",
-    priceInCents: 3499,
-    includedInSubscription: false,
+    priceInCents: 0,
+    includedInSubscription: true,
     description: "Steel, speed, and a #1 contender spot for the Women's Championship.",
     matchCard: [
       {
@@ -205,8 +205,8 @@ export const events: WwcEvent[] = [
     city: "Caguas, Puerto Rico",
     date: "2026-06-14T20:00:00-04:00",
     status: "past",
-    priceInCents: 1999,
-    includedInSubscription: false,
+    priceInCents: 0,
+    includedInSubscription: true,
     description: "The card that reignited the war for the WWC World Heavyweight Championship.",
     matchCard: [
       {

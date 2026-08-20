@@ -12,7 +12,7 @@ export const videos: Video[] = [
     durationSeconds: 10800,
     publishedAt: "2026-06-15T02:00:00-04:00",
     showType: "ppv",
-    access: "purchase",
+    access: "subscribers",
     wrestlers: ["marcus-steele", "diablo-reyes", "ray-lightning", "kiko-salvaje"],
     relatedEventSlug: "guerra-de-titanes-2026",
   },
@@ -93,7 +93,7 @@ export const videos: Video[] = [
     durationSeconds: 1500,
     publishedAt: "2026-06-16T12:05:00-04:00",
     showType: "full-match",
-    access: "purchase",
+    access: "subscribers",
     wrestlers: ["marcus-steele", "diablo-reyes"],
     relatedEventSlug: "guerra-de-titanes-2026",
   },
@@ -185,7 +185,7 @@ export const videos: Video[] = [
     durationSeconds: 780,
     publishedAt: "2026-04-18T12:00:00-04:00",
     showType: "full-match",
-    access: "purchase",
+    access: "subscribers",
     wrestlers: ["luna-rivas", "chico-salazar"],
   },
 
@@ -279,7 +279,7 @@ export const videos: Video[] = [
     durationSeconds: 1020,
     publishedAt: "1992-07-19T20:00:00-04:00",
     showType: "full-match",
-    access: "purchase",
+    access: "subscribers",
     wrestlers: [],
   },
   {
@@ -331,7 +331,7 @@ export const videos: Video[] = [
     durationSeconds: 1500,
     publishedAt: "2005-09-17T20:00:00-04:00",
     showType: "full-match",
-    access: "purchase",
+    access: "subscribers",
     wrestlers: [],
   },
   {
@@ -383,7 +383,7 @@ export const videos: Video[] = [
     durationSeconds: 1140,
     publishedAt: "2018-06-23T20:00:00-04:00",
     showType: "full-match",
-    access: "purchase",
+    access: "subscribers",
     wrestlers: [],
   },
 ];
