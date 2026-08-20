@@ -63,6 +63,32 @@ export async function updateUserPlan(userId: string, plan: PlanId): Promise<void
   if (user) user.plan = plan;
 }
 
+// In-memory password reset tokens — swap for a persisted, hashed-token store
+// (with the same short TTL) when moving off the mock user store.
+const RESET_TOKEN_TTL_MS = 30 * 60 * 1000;
+const passwordResetTokens = new Map<string, { userId: string; expiresAt: number }>();
+
+export async function createPasswordResetToken(email: string): Promise<string | null> {
+  const user = await findUserByEmail(email);
+  if (!user) return null;
+  const token = crypto.randomUUID();
+  passwordResetTokens.set(token, { userId: user.id, expiresAt: Date.now() + RESET_TOKEN_TTL_MS });
+  return token;
+}
+
+export async function resetPasswordWithToken(token: string, newPassword: string): Promise<boolean> {
+  const entry = passwordResetTokens.get(token);
+  if (!entry || entry.expiresAt < Date.now()) {
+    passwordResetTokens.delete(token);
+    return false;
+  }
+  const user = users.find((u) => u.id === entry.userId);
+  passwordResetTokens.delete(token);
+  if (!user) return false;
+  user.passwordHash = bcrypt.hashSync(newPassword, 10);
+  return true;
+}
+
 export async function grantEventPurchase(userId: string, eventSlug: string): Promise<void> {
   const user = users.find((u) => u.id === userId);
   if (user && !user.purchasedEventSlugs.includes(eventSlug)) {

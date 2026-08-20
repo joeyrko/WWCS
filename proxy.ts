@@ -4,7 +4,13 @@ import { auth } from "@/auth";
 // Routes reachable without an account. Everything else redirects signed-out
 // visitors to sign in first — they pick a plan at /pricing once they have an
 // account, then reach the rest of the site.
-const PUBLIC_PATHS = new Set(["/", "/sign-in", "/sign-up"]);
+const PUBLIC_PATHS = new Set([
+  "/",
+  "/sign-in",
+  "/sign-up",
+  "/forgot-password",
+  "/reset-password",
+]);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
