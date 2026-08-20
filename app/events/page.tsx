@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
 import { EventCard } from "@/components/events/event-card";
 import { ContentRow } from "@/components/shared/content-row";
+import { SponsorSlideshow } from "@/components/events/sponsor-slideshow";
 import { Reveal } from "@/components/motion/reveal";
 import { getPastEvents, getUpcomingEvents } from "@/lib/data/events";
+import { sponsors } from "@/data/sponsors";
 
 export const metadata: Metadata = {
   title: "Live Events & PPV",
@@ -59,6 +61,15 @@ export default async function EventsPage() {
             </ContentRow>
           </Reveal>
         )}
+
+        <Reveal>
+          <div>
+            <h2 className="mb-4 px-4 font-display text-2xl uppercase tracking-wide text-white sm:px-6 lg:px-8">
+              Our Sponsors
+            </h2>
+            <SponsorSlideshow sponsors={sponsors} />
+          </div>
+        </Reveal>
       </div>
     </>
   );
