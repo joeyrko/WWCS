@@ -19,13 +19,10 @@ export async function Navbar() {
 
   return (
     <NavbarShell>
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-8">
-          <Logo />
-          <NavLinksDesktop />
-        </div>
-        <div className="flex items-center gap-3">
-          <SearchBar />
+      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 sm:px-6 lg:px-8">
+        <Logo />
+        <NavLinksDesktop between={<SearchBar className="mx-1" />} />
+        <div className="flex items-center justify-end gap-3">
           <AuthNav user={user} />
           <MobileNav user={user} />
         </div>

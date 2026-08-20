@@ -36,10 +36,7 @@ export function SearchBar({ className }: { className?: string }) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={cn("hidden items-center lg:flex", className)}
-    >
+    <form onSubmit={handleSubmit} className={cn("flex items-center", className)}>
       <div
         className={cn(
           "flex items-center gap-2 overflow-hidden rounded-sm border border-transparent transition-all duration-200",
