@@ -5,14 +5,14 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      plan: PlanId;
+      plan: PlanId | null;
       purchasedEventSlugs: string[];
       isAdmin: boolean;
     } & DefaultSession["user"];
   }
 
   interface User {
-    plan?: PlanId;
+    plan?: PlanId | null;
     purchasedEventSlugs?: string[];
     isAdmin?: boolean;
   }

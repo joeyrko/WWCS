@@ -1,7 +1,4 @@
-// "free" is the internal default for an account with no active paid plan —
-// it is never sold as a card (see data/plans.ts, which only lists the three
-// paid tiers below).
-export type PlanId = "free" | "monthly" | "annual" | "legacy";
+export type PlanId = "monthly" | "annual" | "legacy";
 
 export interface Wrestler {
   id: string;
@@ -89,7 +86,7 @@ export interface MockUser {
   email: string;
   passwordHash?: string;
   image?: string;
-  plan: PlanId;
+  plan: PlanId | null;
   purchasedEventSlugs: string[];
   isAdmin?: boolean;
 }

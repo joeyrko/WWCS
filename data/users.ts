@@ -27,7 +27,7 @@ export const users: MockUser[] = [
     name: "Sam Rookie",
     email: "rookie@wwc.tv",
     passwordHash: bcrypt.hashSync("firstmatch", 10),
-    plan: "free",
+    plan: null,
     purchasedEventSlugs: [],
   },
   {

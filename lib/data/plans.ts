@@ -5,6 +5,6 @@ export async function getAllPlans(): Promise<Plan[]> {
   return plans;
 }
 
-export async function getPlanById(id: PlanId): Promise<Plan | undefined> {
+export async function getPlanById(id: PlanId | null): Promise<Plan | undefined> {
   return plans.find((p) => p.id === id);
 }

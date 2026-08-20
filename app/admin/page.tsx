@@ -111,7 +111,7 @@ export default async function AdminPage() {
                 <tr key={user.id}>
                   <td className="px-4 py-3 text-white">{user.name}</td>
                   <td className="px-4 py-3 text-wwc-grey-400">{user.email}</td>
-                  <td className="px-4 py-3 uppercase text-wwc-grey-300">{user.plan}</td>
+                  <td className="px-4 py-3 uppercase text-wwc-grey-300">{user.plan ?? "No Plan"}</td>
                   <td className="px-4 py-3 text-wwc-grey-400">{user.purchasedEventSlugs.length}</td>
                   <td className="px-4 py-3 text-wwc-grey-400">{orderCountByUser.get(user.id) ?? 0}</td>
                   <td className="px-4 py-3">

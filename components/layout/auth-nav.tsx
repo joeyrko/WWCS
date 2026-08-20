@@ -18,7 +18,7 @@ export interface AuthNavUser {
   name?: string | null;
   email?: string | null;
   image?: string | null;
-  plan: string;
+  plan: string | null;
 }
 
 export function AuthNav({ user }: { user: AuthNavUser | null }) {
@@ -51,7 +51,7 @@ export function AuthNav({ user }: { user: AuthNavUser | null }) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>{user.name ?? user.email}</DropdownMenuLabel>
         <div className="px-2.5 pb-1.5 text-xs font-semibold uppercase tracking-wide text-wwc-red">
-          {user.plan} plan
+          {user.plan ? `${user.plan} plan` : "No active plan"}
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>

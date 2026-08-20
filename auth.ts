@@ -13,7 +13,7 @@ import type { PlanId } from "@/types";
 // isolated node_modules, so the extra fields are typed locally via this cast.
 type AppToken = {
   id?: string;
-  plan?: PlanId;
+  plan?: PlanId | null;
   purchasedEventSlugs?: string[];
   isAdmin?: boolean;
 };
@@ -87,7 +87,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const t = token as typeof token & AppToken;
       if (user) {
         t.id = user.id;
-        t.plan = user.plan ?? "free";
+        t.plan = user.plan ?? null;
         t.purchasedEventSlugs = user.purchasedEventSlugs ?? [];
         t.isAdmin = user.isAdmin ?? false;
       } else if (t.id) {
@@ -105,7 +105,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const t = token as typeof token & AppToken;
       if (session.user) {
         session.user.id = t.id ?? "";
-        session.user.plan = t.plan ?? "free";
+        session.user.plan = t.plan ?? null;
         session.user.purchasedEventSlugs = t.purchasedEventSlugs ?? [];
         session.user.isAdmin = t.isAdmin ?? false;
       }
