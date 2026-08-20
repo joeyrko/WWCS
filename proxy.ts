@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 
 // Routes reachable without an account. Everything else redirects signed-out
-// visitors to "/" — the plan-selection/paywall page — where they can pick a
-// plan and pay, sign up free, or log in before reaching the rest of the site.
+// visitors to sign in first — they pick a plan at /pricing once they have an
+// account, then reach the rest of the site.
 const PUBLIC_PATHS = new Set(["/", "/sign-in", "/sign-up"]);
 
 export default auth((req) => {
@@ -13,7 +13,8 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  const url = new URL("/", req.nextUrl.origin);
+  const url = new URL("/sign-in", req.nextUrl.origin);
+  url.searchParams.set("callbackUrl", pathname);
   return NextResponse.redirect(url);
 });
 

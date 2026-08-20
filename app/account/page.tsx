@@ -44,7 +44,7 @@ export default async function AccountPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild variant="outline">
-                <Link href="/">{plan ? "Change Plan" : "Choose a Plan"}</Link>
+                <Link href="/pricing">{plan ? "Change Plan" : "Choose a Plan"}</Link>
               </Button>
               {plan && <ManageBillingButton />}
             </div>

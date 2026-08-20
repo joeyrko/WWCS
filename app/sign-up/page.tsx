@@ -19,7 +19,7 @@ export default async function SignUpPage({
 
   return (
     <AuthCard title="Create Account" subtitle="Create your account, then choose a plan to get in.">
-      <SignUpForm callbackUrl={callbackUrl ?? "/events"} />
+      <SignUpForm callbackUrl={callbackUrl ?? "/pricing"} />
     </AuthCard>
   );
 }

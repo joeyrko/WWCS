@@ -38,7 +38,7 @@ export function EventAccessPanel({
     }
     return (
       <Button asChild size="lg">
-        <Link href="/">Subscribe to Watch</Link>
+        <Link href="/pricing">Subscribe to Watch</Link>
       </Button>
     );
   }
