@@ -14,7 +14,7 @@ export function AccessGate({ video, signedIn }: { video: Video; signedIn: boolea
         </h2>
         <p className="mt-2 max-w-sm text-sm text-wwc-grey-400">
           {!signedIn
-            ? "Sign in to watch — subscribers and PPV purchasers get instant access."
+            ? "Sign in to watch — WWC+ subscribers get instant access."
             : video.access === "subscribers"
               ? "Upgrade to WWC+ to unlock this video and the entire on-demand library."
               : "Purchase this event to unlock the replay."}
@@ -37,7 +37,7 @@ export function AccessGate({ video, signedIn }: { video: Video; signedIn: boolea
           </CheckoutButton>
         )}
         <Button asChild variant="outline">
-          <Link href="/watch">Browse Free Content</Link>
+          <Link href="/watch">Browse Library</Link>
         </Button>
       </div>
     </div>

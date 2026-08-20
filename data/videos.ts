@@ -40,7 +40,7 @@ export const videos: Video[] = [
     durationSeconds: 3600,
     publishedAt: "2026-08-14T21:00:00-04:00",
     showType: "weekly-show",
-    access: "free",
+    access: "subscribers",
     wrestlers: ["diablo-reyes", "chico-salazar"],
   },
   {
@@ -53,7 +53,7 @@ export const videos: Video[] = [
     durationSeconds: 3600,
     publishedAt: "2026-08-07T21:00:00-04:00",
     showType: "weekly-show",
-    access: "free",
+    access: "subscribers",
     wrestlers: ["nadia-cold", "reina-vega"],
   },
   {
@@ -120,7 +120,7 @@ export const videos: Video[] = [
     durationSeconds: 480,
     publishedAt: "2026-08-01T10:00:00-04:00",
     showType: "highlight",
-    access: "free",
+    access: "subscribers",
     wrestlers: ["diablo-reyes", "marcus-steele", "ray-lightning", "luna-rivas"],
   },
   {
@@ -133,7 +133,7 @@ export const videos: Video[] = [
     durationSeconds: 360,
     publishedAt: "2026-07-20T10:00:00-04:00",
     showType: "highlight",
-    access: "free",
+    access: "subscribers",
     wrestlers: ["big-tanko"],
   },
   {
@@ -159,7 +159,7 @@ export const videos: Video[] = [
     durationSeconds: 420,
     publishedAt: "2026-06-25T10:00:00-04:00",
     showType: "highlight",
-    access: "free",
+    access: "subscribers",
     wrestlers: ["damian-vance", "otto-graves"],
   },
   {
@@ -172,7 +172,7 @@ export const videos: Video[] = [
     durationSeconds: 3600,
     publishedAt: "2026-07-24T21:00:00-04:00",
     showType: "weekly-show",
-    access: "free",
+    access: "subscribers",
     wrestlers: ["luna-rivas"],
   },
   {
@@ -227,7 +227,7 @@ export const videos: Video[] = [
     durationSeconds: 840,
     publishedAt: "1979-11-23T20:00:00-04:00",
     showType: "highlight",
-    access: "free",
+    access: "subscribers",
     wrestlers: [],
   },
   {
@@ -253,7 +253,7 @@ export const videos: Video[] = [
     durationSeconds: 660,
     publishedAt: "1986-02-08T20:00:00-04:00",
     showType: "highlight",
-    access: "free",
+    access: "subscribers",
     wrestlers: [],
   },
   {
@@ -292,7 +292,7 @@ export const videos: Video[] = [
     durationSeconds: 540,
     publishedAt: "1996-04-27T20:00:00-04:00",
     showType: "highlight",
-    access: "free",
+    access: "subscribers",
     wrestlers: [],
   },
   {
@@ -344,7 +344,7 @@ export const videos: Video[] = [
     durationSeconds: 480,
     publishedAt: "2008-08-02T20:00:00-04:00",
     showType: "highlight",
-    access: "free",
+    access: "subscribers",
     wrestlers: [],
   },
   {
@@ -357,7 +357,7 @@ export const videos: Video[] = [
     durationSeconds: 660,
     publishedAt: "2012-03-30T20:00:00-04:00",
     showType: "highlight",
-    access: "free",
+    access: "subscribers",
     wrestlers: [],
   },
   {
