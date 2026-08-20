@@ -7,7 +7,6 @@ import { videos } from "@/data/videos";
 import { getRelatedVideos, getVideoBySlug } from "@/lib/data/videos";
 import { getWrestlersBySlugs } from "@/lib/data/wrestlers";
 import { userHasAccessToVideo } from "@/lib/data/users";
-import { AccessBadge } from "@/components/shared/access-badge";
 import { VideoPlayer } from "@/components/watch/video-player";
 import { AccessGate } from "@/components/watch/access-gate";
 import { RelatedVideosRail } from "@/components/watch/related-videos-rail";
@@ -59,12 +58,9 @@ export default async function WatchDetailPage({
             <AccessGate video={video} signedIn={!!session?.user} />
           )}
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <AccessBadge access={video.access} />
-            <span className="flex items-center gap-1.5 text-sm text-wwc-grey-500">
-              <Calendar className="h-4 w-4" />
-              {formatDate(video.publishedAt, { month: "long", day: "numeric", year: "numeric" })}
-            </span>
+          <div className="mt-6 flex items-center gap-1.5 text-sm text-wwc-grey-500">
+            <Calendar className="h-4 w-4" />
+            {formatDate(video.publishedAt, { month: "long", day: "numeric", year: "numeric" })}
           </div>
 
           <h1 className="mt-3 font-display text-3xl uppercase leading-tight tracking-wide text-white sm:text-4xl">

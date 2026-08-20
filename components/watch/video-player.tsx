@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Play } from "lucide-react";
 import { Poster } from "@/components/media/poster";
+import { getVideoEmbed } from "@/lib/video-embed";
 
 export function VideoPlayer({ src, title, seed }: { src: string; title: string; seed: string }) {
   const [playing, setPlaying] = useState(false);
@@ -25,18 +26,23 @@ export function VideoPlayer({ src, title, seed }: { src: string; title: string; 
     );
   }
 
+  const embed = getVideoEmbed(src);
+
   return (
-    <div className="flex flex-col gap-2">
-      <div className="overflow-hidden rounded-md border border-wwc-grey-800 bg-black">
+    <div className="overflow-hidden rounded-md border border-wwc-grey-800 bg-black">
+      {embed.kind === "file" ? (
         <video controls autoPlay className="aspect-video w-full">
           <source src={src} />
         </video>
-      </div>
-      <p className="text-xs text-wwc-grey-600">
-        Demo playback — this project ships with placeholder video sources. Point{" "}
-        <code className="text-wwc-grey-400">videoUrl</code> in{" "}
-        <code className="text-wwc-grey-400">data/videos.ts</code> at real media to go live.
-      </p>
+      ) : (
+        <iframe
+          src={embed.embedUrl}
+          title={title}
+          className="aspect-video w-full"
+          allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+          allowFullScreen
+        />
+      )}
     </div>
   );
 }

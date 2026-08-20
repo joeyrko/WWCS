@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { users, orders } from "@/data/users";
-import type { AccessLevel, MockUser, Order, PlanId, Video, WwcEvent } from "@/types";
+import type { MockUser, Order, PlanId, Video, WwcEvent } from "@/types";
 
 // Repository layer over the in-memory mock user store.
 // Swap for real database calls (Prisma, Drizzle, etc.) later without touching callers.
@@ -123,15 +123,4 @@ export function userHasAccessToEvent(user: AccessSubject | null | undefined, eve
   if (event.includedInSubscription) return userHasSubscriberAccess(user);
   if (!user) return false;
   return user.purchasedEventSlugs.includes(event.slug);
-}
-
-export function accessLevelLabel(access: AccessLevel): string {
-  switch (access) {
-    case "free":
-      return "Free";
-    case "subscribers":
-      return "Subscribers Only";
-    case "purchase":
-      return "Purchase Required";
-  }
 }

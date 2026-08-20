@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Play } from "lucide-react";
 import { Poster } from "@/components/media/poster";
-import { AccessBadge } from "@/components/shared/access-badge";
 import type { Video } from "@/types";
 
 function formatDuration(seconds: number) {
@@ -33,9 +32,6 @@ export function VideoCard({ video, className }: { video: Video; className?: stri
             monogram={false}
             showLabel={false}
           />
-          <div className="absolute left-2 top-2">
-            <AccessBadge access={video.access} />
-          </div>
           <span className="absolute bottom-2 right-2 rounded-sm bg-black/80 px-1.5 py-0.5 text-[11px] font-semibold text-white">
             {formatDuration(video.durationSeconds)}
           </span>
