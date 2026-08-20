@@ -10,6 +10,7 @@ const PUBLIC_PATHS = new Set([
   "/sign-up",
   "/forgot-password",
   "/reset-password",
+  "/manifest.webmanifest",
 ]);
 
 export default auth((req) => {

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Anton, Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { SessionProvider } from "@/components/providers/session-provider";
@@ -38,6 +38,20 @@ export const metadata: Metadata = {
     description:
       "Stream every WWC live pay-per-view event and the full on-demand library — anytime, anywhere.",
   },
+  appleWebApp: {
+    capable: true,
+    title: "WWC+",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    icon: "/wwc-logo.png",
+    apple: "/apple-touch-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#070707",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
