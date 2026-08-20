@@ -22,7 +22,8 @@ export const plans: Plan[] = [
     interval: "year",
     tagline: "Every show, all year.",
     features: [
-      "Included live PPV events",
+      "Access to the entire library",
+      "Access to live events",
       "Equivalent to $5.83 a month",
       "Cancel anytime",
     ],
@@ -35,7 +36,8 @@ export const plans: Plan[] = [
     interval: "year",
     tagline: "Ringside access, all year long.",
     features: [
-      "Everything in WWC+ Annual",
+      "Access to the entire library",
+      "Access to live events",
       "1 general admission ticket to each of our 4 biggest events of the year",
       "One photo with your favorite wrestler per event",
       "Cancel anytime",
