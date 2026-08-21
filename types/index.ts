@@ -41,7 +41,7 @@ export interface WwcEvent {
   description: string;
 }
 
-export type ShowType = "ppv" | "weekly-show" | "full-match" | "highlight";
+export type ShowType = "ppv" | "weekly-show" | "full-match" | "highlight" | "documentary";
 
 export interface Video {
   id: string;

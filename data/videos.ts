@@ -386,6 +386,66 @@ export const videos: Video[] = [
     access: "subscribers",
     wrestlers: [],
   },
+
+  // Original documentary features.
+  {
+    id: "v30",
+    slug: "the-making-of-wwc-an-oral-history",
+    title: "The Making of WWC: An Oral History",
+    description:
+      "From a single ring in San Juan to a Caribbean institution — the people who built WWC tell it in their own words.",
+    thumbnailUrl: "the-making-of-wwc-an-oral-history",
+    videoUrl: "/mock-media/sample.mp4",
+    durationSeconds: 2940,
+    publishedAt: "2026-07-11T10:00:00-04:00",
+    showType: "documentary",
+    access: "subscribers",
+    wrestlers: [],
+  },
+  {
+    id: "v31",
+    slug: "diablo-reyes-the-devils-reign",
+    title: "Diablo Reyes: The Devil's Reign",
+    description:
+      "A feature-length look at the rise of WWC's most dominant champion — the losses, the rivalries, and the title that changed everything.",
+    thumbnailUrl: "diablo-reyes-the-devils-reign",
+    videoUrl: "/mock-media/sample.mp4",
+    durationSeconds: 2520,
+    publishedAt: "2026-08-05T10:00:00-04:00",
+    showType: "documentary",
+    access: "subscribers",
+    wrestlers: ["diablo-reyes"],
+  },
+  {
+    id: "v32",
+    slug: "inside-the-locker-room",
+    title: "Inside the Locker Room",
+    description:
+      "Unprecedented access backstage at Guerra de Titanes 2026 — the nerves, the preparation, and the moments before the bell.",
+    thumbnailUrl: "inside-the-locker-room",
+    videoUrl: "/mock-media/sample.mp4",
+    durationSeconds: 1980,
+    publishedAt: "2026-06-20T10:00:00-04:00",
+    showType: "documentary",
+    access: "subscribers",
+    wrestlers: ["marcus-steele", "diablo-reyes"],
+    relatedEventSlug: "guerra-de-titanes-2026",
+  },
+  {
+    id: "v33",
+    slug: "guerra-de-titanes-the-rivalry-that-redefined-wwc",
+    title: "Guerra de Titanes: The Rivalry That Redefined WWC",
+    description:
+      "How Marcus Steele and Diablo Reyes turned a personal grudge into the defining rivalry of a generation.",
+    thumbnailUrl: "guerra-de-titanes-the-rivalry-that-redefined-wwc",
+    videoUrl: "/mock-media/sample.mp4",
+    durationSeconds: 3300,
+    publishedAt: "2026-08-12T10:00:00-04:00",
+    showType: "documentary",
+    access: "subscribers",
+    wrestlers: ["marcus-steele", "diablo-reyes"],
+    relatedEventSlug: "guerra-de-titanes-2026",
+  },
 ];
 
 export function getVideoBySlug(slug: string) {

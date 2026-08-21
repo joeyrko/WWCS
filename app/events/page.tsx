@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
 import { EventCard } from "@/components/events/event-card";
+import { VideoCard } from "@/components/watch/video-card";
 import { ContentRow } from "@/components/shared/content-row";
 import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
 import { Reveal } from "@/components/motion/reveal";
 import { getPastEvents, getUpcomingEvents } from "@/lib/data/events";
+import { searchVideos } from "@/lib/data/videos";
 import { sponsors } from "@/data/sponsors";
 
 export const metadata: Metadata = {
@@ -13,7 +15,11 @@ export const metadata: Metadata = {
 };
 
 export default async function EventsPage() {
-  const [upcoming, past] = await Promise.all([getUpcomingEvents(), getPastEvents()]);
+  const [upcoming, past, documentaries] = await Promise.all([
+    getUpcomingEvents(),
+    getPastEvents(),
+    searchVideos({ showType: "documentary" }),
+  ]);
   const live = upcoming.filter((e) => e.status === "live");
   const scheduled = upcoming.filter((e) => e.status !== "live");
 
@@ -59,6 +65,16 @@ export default async function EventsPage() {
             <ContentRow title="Past Events & Replays">
               {past.map((event) => (
                 <EventCard key={event.id} event={event} />
+              ))}
+            </ContentRow>
+          </Reveal>
+        )}
+
+        {documentaries.length > 0 && (
+          <Reveal>
+            <ContentRow title="Documentaries">
+              {documentaries.map((video) => (
+                <VideoCard key={video.id} video={video} />
               ))}
             </ContentRow>
           </Reveal>
