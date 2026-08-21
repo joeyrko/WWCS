@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SearchX } from "lucide-react";
 import { StaggerIn } from "@/components/motion/stagger-in";
-import { HeroSlideshow } from "@/components/events/hero-slideshow";
+import { HeroSlideshow } from "@/components/shared/hero-slideshow";
 import { FiltersBar } from "@/components/watch/filters-bar";
 import { VideoCard } from "@/components/events/video-card";
 import { ContentRow } from "@/components/shared/content-row";
