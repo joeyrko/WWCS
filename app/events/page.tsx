@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SearchX } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { FiltersBar } from "@/components/watch/filters-bar";
-import { VideoCard } from "@/components/watch/video-card";
+import { VideoCard } from "@/components/events/video-card";
 import { ContentRow } from "@/components/shared/content-row";
 import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
 import { StaggerGrid } from "@/components/motion/stagger-grid";
@@ -21,7 +21,13 @@ function firstValue(value: string | string[] | undefined): string {
   return value ?? "";
 }
 
-const DECADES = [1970, 1980, 1990, 2000, 2010];
+const DECADE_LABELS: Record<number, string> = {
+  1970: "Live",
+  1980: "Upcoming",
+  1990: "Past Events",
+  2000: "Documentaries",
+};
+const DECADES = [1970, 1980, 1990, 2000];
 
 function decadeOf(publishedAt: string): number {
   return Math.floor(new Date(publishedAt).getFullYear() / 10) * 10;
@@ -88,7 +94,7 @@ async function BrowseRows() {
         if (rowVideos.length === 0) return null;
         return (
           <Reveal key={decade}>
-            <ContentRow title={`${decade}'s`}>
+            <ContentRow title={DECADE_LABELS[decade]}>
               {rowVideos.map((video) => (
                 <VideoCard key={video.id} video={video} />
               ))}
