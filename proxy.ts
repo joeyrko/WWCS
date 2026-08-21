@@ -11,6 +11,8 @@ const PUBLIC_PATHS = new Set([
   "/forgot-password",
   "/reset-password",
   "/manifest.webmanifest",
+  "/robots.txt",
+  "/sitemap.xml",
 ]);
 
 // Reachable even by a signed-in user with no active plan — must include
