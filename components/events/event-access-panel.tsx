@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CheckCircle2, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/shared/checkout-button";
+import { VideoPlayer } from "@/components/watch/video-player";
 import type { WwcEvent } from "@/types";
 
 export function EventAccessPanel({
@@ -23,6 +24,14 @@ export function EventAccessPanel({
             <PlayCircle className="h-5 w-5" /> Watch Replay
           </Link>
         </Button>
+      </div>
+    );
+  }
+
+  if (hasAccess && event.status === "live" && event.streamUrl) {
+    return (
+      <div className="w-full max-w-2xl">
+        <VideoPlayer src={event.streamUrl} title={event.title} />
       </div>
     );
   }

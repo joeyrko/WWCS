@@ -39,6 +39,7 @@ export interface WwcEvent {
   includedInSubscription: boolean;
   matchCard: Match[];
   description: string;
+  streamUrl?: string;
 }
 
 export type ShowType = "ppv" | "weekly-show" | "full-match" | "highlight" | "documentary";

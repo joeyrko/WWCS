@@ -62,7 +62,7 @@ export default async function EventsPage() {
 
         {past.length > 0 && (
           <Reveal>
-            <ContentRow title="Past Events & Replays">
+            <ContentRow title="Past Events">
               {past.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}

@@ -66,6 +66,7 @@ export const events: WwcEvent[] = [
     includedInSubscription: true,
     description:
       "Live tonight from Mayagüez. The champion defends against the loudest voice in the locker room.",
+    streamUrl: "https://rumble.com/v6m2k9p-wwc-invasion-caribe-live.html",
     matchCard: [
       {
         id: "m22",

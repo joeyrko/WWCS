@@ -53,7 +53,7 @@ export default async function WatchDetailPage({
     <div className="pt-24 sm:pt-28">
       <div className="mx-auto max-w-4xl px-4 pb-10 sm:px-6 lg:px-8">
         {hasAccess ? (
-            <VideoPlayer src={video.videoUrl} title={video.title} seed={video.slug} />
+            <VideoPlayer src={video.videoUrl} title={video.title} />
           ) : (
             <AccessGate video={video} signedIn={!!session?.user} />
           )}
