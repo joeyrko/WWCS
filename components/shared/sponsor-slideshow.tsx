@@ -5,22 +5,6 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import type { Sponsor } from "@/data/sponsors";
 
-const GRADIENTS = [
-  "from-wwc-red-dark via-wwc-black to-wwc-black",
-  "from-wwc-grey-800 via-wwc-black to-wwc-red-dark",
-  "from-wwc-black via-wwc-grey-900 to-wwc-red-dark",
-  "from-wwc-red-dark via-wwc-grey-900 to-wwc-black",
-];
-
-function hashSeed(seed: string) {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    hash = (hash << 5) - hash + seed.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash);
-}
-
 const AUTO_ADVANCE_MS = 4000;
 
 export function SponsorSlideshow({ sponsors }: { sponsors: Sponsor[] }) {
@@ -53,7 +37,7 @@ export function SponsorSlideshow({ sponsors }: { sponsors: Sponsor[] }) {
                 key={sponsor.id}
                 aria-hidden={i !== index}
                 className={cn(
-                  "absolute inset-0 bg-black transition-opacity duration-700 ease-out",
+                  "absolute inset-0 transition-opacity duration-700 ease-out",
                   i === index ? "opacity-100" : "opacity-0"
                 )}
               >
@@ -68,18 +52,15 @@ export function SponsorSlideshow({ sponsors }: { sponsors: Sponsor[] }) {
             );
           }
 
-          const gradient = GRADIENTS[hashSeed(sponsor.id) % GRADIENTS.length];
           return (
             <div
               key={sponsor.id}
               aria-hidden={i !== index}
               className={cn(
-                "absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br text-center transition-opacity duration-700 ease-out",
-                gradient,
+                "absolute inset-0 flex flex-col items-center justify-center text-center transition-opacity duration-700 ease-out",
                 i === index ? "opacity-100" : "opacity-0"
               )}
             >
-              <div className="absolute inset-0 opacity-[0.06] [background-image:repeating-linear-gradient(115deg,#fff_0,#fff_1px,transparent_1px,transparent_14px)]" />
               <p className="relative z-10 font-display text-2xl uppercase tracking-wide text-white sm:text-4xl">
                 {sponsor.name}
               </p>
