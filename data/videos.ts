@@ -197,7 +197,7 @@ export const videos: Video[] = [
     title: "El Terremoto Defends the Territory Title",
     description: "Grainy footage from WWC's earliest days as a San Juan territory promotion.",
     thumbnailUrl: "terremoto-founding-territory-match-1973",
-    videoUrl: "/mock-media/sample.mp4",
+    videoUrl: "https://www.youtube.com/watch?v=dLLUtKjok6s",
     durationSeconds: 900,
     publishedAt: "1973-03-11T20:00:00-04:00",
     showType: "full-match",
