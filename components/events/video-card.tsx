@@ -29,7 +29,7 @@ export function VideoCard({ video, className }: { video: Video; className?: stri
           <Poster
             seed={video.slug}
             title={video.title}
-            aspect="video"
+            aspect="square"
             monogram={false}
             showLabel={false}
           />

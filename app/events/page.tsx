@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SearchX } from "lucide-react";
-import { PageHeader } from "@/components/shared/page-header";
+import { StaggerIn } from "@/components/motion/stagger-in";
+import { HeroSlideshow } from "@/components/events/hero-slideshow";
 import { FiltersBar } from "@/components/watch/filters-bar";
 import { VideoCard } from "@/components/events/video-card";
 import { ContentRow } from "@/components/shared/content-row";
@@ -28,6 +29,8 @@ const DECADE_LABELS: Record<number, string> = {
   2000: "Documentaries",
 };
 const DECADES = [1970, 1980, 1990, 2000];
+const UPCOMING_DECADE = 1980;
+const ROW_ITEM_CLASS = "w-60 sm:w-72 lg:w-80";
 
 function decadeOf(publishedAt: string): number {
   return Math.floor(new Date(publishedAt).getFullYear() / 10) * 10;
@@ -45,24 +48,31 @@ export default async function HomePage({
   const sort = firstValue(params.sort) || "newest";
   const hasActiveFilters = Boolean(q) || type !== "all" || wrestler !== "all";
 
+  const all = await getAllVideos();
+  const upcoming = all.filter((video) => decadeOf(video.publishedAt) === UPCOMING_DECADE);
+
   return (
     <>
-      <PageHeader
-        eyebrow="WWC+"
-        title="Home"
-        description="Every show, every replay — anytime."
-        centered
-        className="border-transparent bg-transparent"
-      />
-
-      <div className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
-        <FiltersBar current={{ q, type, wrestler, sort }} />
-      </div>
+      <section className="relative isolate overflow-hidden border-b border-wwc-grey-900 pb-14 pt-28 sm:pb-24 sm:pt-36">
+        <HeroSlideshow videos={upcoming} />
+        <StaggerIn className="relative z-10 mx-auto flex max-w-7xl flex-col items-center px-4 text-center sm:px-6 lg:px-8">
+          <span className="mb-3 inline-block rounded-sm border border-wwc-red/50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wwc-red">
+            WWC+
+          </span>
+          <h1 className="font-display text-4xl uppercase tracking-wide text-white sm:text-5xl">
+            Home
+          </h1>
+          <p className="mt-3 max-w-2xl text-wwc-grey-400">Every show, every replay — anytime.</p>
+          <div className="mt-6 w-full max-w-sm">
+            <FiltersBar current={{ q, type, wrestler, sort }} />
+          </div>
+        </StaggerIn>
+      </section>
 
       {hasActiveFilters ? (
         <FilteredResults filters={{ query: q || undefined, showType: type as VideoFilters["showType"], wrestlerSlug: wrestler === "all" ? undefined : wrestler, sort: sort === "oldest" ? "oldest" : "newest" }} />
       ) : (
-        <BrowseRows />
+        <BrowseRows videos={all} />
       )}
 
       <Reveal>
@@ -77,10 +87,9 @@ export default async function HomePage({
   );
 }
 
-async function BrowseRows() {
-  const all = await getAllVideos();
+function BrowseRows({ videos }: { videos: Video[] }) {
   const byDecade = new Map<number, Video[]>();
-  for (const video of all) {
+  for (const video of videos) {
     const decade = decadeOf(video.publishedAt);
     const list = byDecade.get(decade) ?? [];
     list.push(video);
@@ -94,7 +103,7 @@ async function BrowseRows() {
         if (rowVideos.length === 0) return null;
         return (
           <Reveal key={decade}>
-            <ContentRow title={DECADE_LABELS[decade]}>
+            <ContentRow title={DECADE_LABELS[decade]} itemClassName={ROW_ITEM_CLASS}>
               {rowVideos.map((video) => (
                 <VideoCard key={video.id} video={video} />
               ))}
