@@ -1,99 +1,125 @@
 import type { Metadata } from "next";
+import { SearchX } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
-import { EventCard } from "@/components/events/event-card";
+import { FiltersBar } from "@/components/watch/filters-bar";
 import { VideoCard } from "@/components/watch/video-card";
 import { ContentRow } from "@/components/shared/content-row";
 import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
+import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { Reveal } from "@/components/motion/reveal";
-import { getPastEvents, getUpcomingEvents } from "@/lib/data/events";
-import { getVideoByEventSlug, searchVideos } from "@/lib/data/videos";
+import { getAllVideos, searchVideos, type VideoFilters } from "@/lib/data/videos";
 import { sponsors } from "@/data/sponsors";
+import type { Video } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Live Events",
-  description: "Every upcoming WWC live pay-per-view event, plus replays of past shows.",
+  title: "Home",
+  description: "Browse the full WWC on-demand library — PPV replays, weekly shows, full matches, and highlights.",
 };
 
-export default async function EventsPage() {
-  const [upcoming, past, documentaries] = await Promise.all([
-    getUpcomingEvents(),
-    getPastEvents(),
-    searchVideos({ showType: "documentary" }),
-  ]);
-  const live = upcoming.filter((e) => e.status === "live");
-  const scheduled = upcoming.filter((e) => e.status !== "live");
+function firstValue(value: string | string[] | undefined): string {
+  if (Array.isArray(value)) return value[0] ?? "";
+  return value ?? "";
+}
 
-  const pastReplays = await Promise.all(
-    past.map(async (event) => [event.slug, (await getVideoByEventSlug(event.slug))?.slug] as const)
-  );
-  const replaySlugByEvent = new Map(pastReplays);
+const DECADES = [1970, 1980, 1990, 2000, 2010];
+
+function decadeOf(publishedAt: string): number {
+  return Math.floor(new Date(publishedAt).getFullYear() / 10) * 10;
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  const q = firstValue(params.q);
+  const type = firstValue(params.type) || "all";
+  const wrestler = firstValue(params.wrestler) || "all";
+  const sort = firstValue(params.sort) || "newest";
+  const hasActiveFilters = Boolean(q) || type !== "all" || wrestler !== "all";
 
   return (
     <>
       <PageHeader
-        eyebrow="Events Hub"
-        title="Live Events"
-        description="Every upcoming WWC show — live, Never miss a Moment"
+        eyebrow="WWC+"
+        title="Home"
+        description="Every show, every replay — anytime."
         centered
         className="border-transparent bg-transparent"
       />
 
-      <div className="flex flex-col gap-10 py-10 sm:py-14">
-        {live.length > 0 && (
-          <Reveal>
-            <ContentRow title="Live Now">
-              {live.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </ContentRow>
-          </Reveal>
-        )}
+      <div className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
+        <FiltersBar current={{ q, type, wrestler, sort }} />
+      </div>
 
-        {scheduled.length > 0 ? (
-          <Reveal>
-            <ContentRow title="Upcoming Events">
-              {scheduled.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </ContentRow>
-          </Reveal>
-        ) : (
-          live.length === 0 && (
-            <p className="px-4 text-wwc-grey-400 sm:px-6 lg:px-8">
-              No upcoming events scheduled right now — check back soon.
-            </p>
-          )
-        )}
+      {hasActiveFilters ? (
+        <FilteredResults filters={{ query: q || undefined, showType: type as VideoFilters["showType"], wrestlerSlug: wrestler === "all" ? undefined : wrestler, sort: sort === "oldest" ? "oldest" : "newest" }} />
+      ) : (
+        <BrowseRows />
+      )}
 
-        {past.length > 0 && (
-          <Reveal>
-            <ContentRow title="Past Events">
-              {past.map((event) => (
-                <EventCard key={event.id} event={event} watchSlug={replaySlugByEvent.get(event.slug)} />
-              ))}
-            </ContentRow>
-          </Reveal>
-        )}
+      <Reveal>
+        <div className="pb-10 sm:pb-14">
+          <h2 className="mb-4 px-4 font-display text-2xl uppercase tracking-wide text-white sm:px-6 lg:px-8">
+            Our Sponsors
+          </h2>
+          <SponsorSlideshow sponsors={sponsors} />
+        </div>
+      </Reveal>
+    </>
+  );
+}
 
-        {documentaries.length > 0 && (
-          <Reveal>
-            <ContentRow title="Documentaries">
-              {documentaries.map((video) => (
+async function BrowseRows() {
+  const all = await getAllVideos();
+  const byDecade = new Map<number, Video[]>();
+  for (const video of all) {
+    const decade = decadeOf(video.publishedAt);
+    const list = byDecade.get(decade) ?? [];
+    list.push(video);
+    byDecade.set(decade, list);
+  }
+
+  return (
+    <div className="flex flex-col gap-10 py-10 sm:py-14">
+      {DECADES.map((decade) => {
+        const rowVideos = byDecade.get(decade) ?? [];
+        if (rowVideos.length === 0) return null;
+        return (
+          <Reveal key={decade}>
+            <ContentRow title={`${decade}'s`}>
+              {rowVideos.map((video) => (
                 <VideoCard key={video.id} video={video} />
               ))}
             </ContentRow>
           </Reveal>
-        )}
+        );
+      })}
+    </div>
+  );
+}
 
-        <Reveal>
-          <div>
-            <h2 className="mb-4 px-4 font-display text-2xl uppercase tracking-wide text-white sm:px-6 lg:px-8">
-              Our Sponsors
-            </h2>
-            <SponsorSlideshow sponsors={sponsors} />
-          </div>
-        </Reveal>
-      </div>
-    </>
+async function FilteredResults({ filters }: { filters: VideoFilters }) {
+  const videos = await searchVideos(filters);
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      {videos.length > 0 ? (
+        <StaggerGrid className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {videos.map((video) => (
+            <VideoCard key={video.id} video={video} />
+          ))}
+        </StaggerGrid>
+      ) : (
+        <div className="flex flex-col items-center gap-3 rounded-md border border-dashed border-wwc-grey-800 py-20 text-center">
+          <SearchX className="h-10 w-10 text-wwc-grey-600" />
+          <p className="font-display text-xl uppercase tracking-wide text-white">No results found</p>
+          <p className="max-w-sm text-sm text-wwc-grey-500">
+            Try a different search term or clear your filters to see the full library.
+          </p>
+        </div>
+      )}
+    </section>
   );
 }

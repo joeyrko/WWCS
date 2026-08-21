@@ -3,14 +3,13 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { getSession } from "@/lib/get-session";
 import { getAllUsers, getAllOrders } from "@/lib/data/users";
-import { getAllEvents } from "@/lib/data/events";
 import { getAllVideos } from "@/lib/data/videos";
 import { getAllWrestlers } from "@/lib/data/wrestlers";
 import { Badge } from "@/components/ui/badge";
 import { AdminPinGate } from "@/components/admin/admin-pin-gate";
 import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import type { AccessLevel, Order, WwcEvent } from "@/types";
+import type { AccessLevel, Order } from "@/types";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -25,12 +24,6 @@ function StatCard({ label, value }: { label: string; value: string | number }) {
     </div>
   );
 }
-
-const EVENT_STATUS_VARIANT: Record<WwcEvent["status"], "subscribers" | "purchase" | "default"> = {
-  live: "subscribers",
-  upcoming: "default",
-  past: "purchase",
-};
 
 const ACCESS_VARIANT: Record<AccessLevel, "free" | "subscribers" | "purchase"> = {
   free: "free",
@@ -52,10 +45,9 @@ export default async function AdminPage() {
   const pinVerified = cookieStore.get(ADMIN_PIN_COOKIE)?.value === "verified";
   if (!pinVerified) return <AdminPinGate />;
 
-  const [users, orders, events, videos, wrestlers] = await Promise.all([
+  const [users, orders, videos, wrestlers] = await Promise.all([
     getAllUsers(),
     getAllOrders(),
-    getAllEvents(),
     getAllVideos(),
     getAllWrestlers(),
   ]);
@@ -83,11 +75,10 @@ export default async function AdminPage() {
         </p>
       </div>
 
-      <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard label="Users" value={users.length} />
         <StatCard label="Orders" value={orders.length} />
         <StatCard label="Revenue" value={formatCurrency(revenueInCents)} />
-        <StatCard label="Events" value={events.length} />
         <StatCard label="Videos" value={videos.length} />
         <StatCard label="Roster" value={wrestlers.length} />
       </div>
@@ -167,69 +158,35 @@ export default async function AdminPage() {
         </div>
       </section>
 
-      <div className="grid gap-10 lg:grid-cols-2">
-        <section>
-          <h2 className="mb-4 font-display text-2xl uppercase tracking-wide text-white">
-            Events ({events.length})
-          </h2>
-          <div className="overflow-x-auto rounded-md border border-wwc-grey-800">
-            <table className="w-full min-w-[420px] text-left text-sm">
-              <thead className="bg-wwc-grey-900 text-xs uppercase tracking-wide text-wwc-grey-400">
-                <tr>
-                  <th className="px-4 py-3 font-semibold">Title</th>
-                  <th className="px-4 py-3 font-semibold">Date</th>
-                  <th className="px-4 py-3 font-semibold">Status</th>
+      <section>
+        <h2 className="mb-4 font-display text-2xl uppercase tracking-wide text-white">
+          Videos ({videos.length})
+        </h2>
+        <div className="overflow-x-auto rounded-md border border-wwc-grey-800">
+          <table className="w-full min-w-[420px] text-left text-sm">
+            <thead className="bg-wwc-grey-900 text-xs uppercase tracking-wide text-wwc-grey-400">
+              <tr>
+                <th className="px-4 py-3 font-semibold">Title</th>
+                <th className="px-4 py-3 font-semibold">Show Type</th>
+                <th className="px-4 py-3 font-semibold">Access</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-wwc-grey-800 bg-wwc-grey-950">
+              {videos.map((video) => (
+                <tr key={video.id}>
+                  <td className="px-4 py-3 text-white">{video.title}</td>
+                  <td className="px-4 py-3 uppercase text-wwc-grey-400">{video.showType}</td>
+                  <td className="px-4 py-3">
+                    <Badge variant={ACCESS_VARIANT[video.access]} className="capitalize">
+                      {video.access}
+                    </Badge>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-wwc-grey-800 bg-wwc-grey-950">
-                {events.map((event) => (
-                  <tr key={event.id}>
-                    <td className="px-4 py-3 text-white">{event.title}</td>
-                    <td className="px-4 py-3 text-wwc-grey-400">
-                      {formatDate(event.date, { month: "short", day: "numeric", year: "numeric" })}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge variant={EVENT_STATUS_VARIANT[event.status]} className="capitalize">
-                        {event.status}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="mb-4 font-display text-2xl uppercase tracking-wide text-white">
-            Videos ({videos.length})
-          </h2>
-          <div className="overflow-x-auto rounded-md border border-wwc-grey-800">
-            <table className="w-full min-w-[420px] text-left text-sm">
-              <thead className="bg-wwc-grey-900 text-xs uppercase tracking-wide text-wwc-grey-400">
-                <tr>
-                  <th className="px-4 py-3 font-semibold">Title</th>
-                  <th className="px-4 py-3 font-semibold">Show Type</th>
-                  <th className="px-4 py-3 font-semibold">Access</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-wwc-grey-800 bg-wwc-grey-950">
-                {videos.map((video) => (
-                  <tr key={video.id}>
-                    <td className="px-4 py-3 text-white">{video.title}</td>
-                    <td className="px-4 py-3 uppercase text-wwc-grey-400">{video.showType}</td>
-                    <td className="px-4 py-3">
-                      <Badge variant={ACCESS_VARIANT[video.access]} className="capitalize">
-                        {video.access}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   );
 }

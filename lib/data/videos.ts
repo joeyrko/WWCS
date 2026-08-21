@@ -52,10 +52,6 @@ export async function getRelatedVideos(video: Video, limit = 4): Promise<Video[]
     .slice(0, limit);
 }
 
-export async function getVideoByEventSlug(eventSlug: string): Promise<Video | undefined> {
-  return videos.find((v) => v.relatedEventSlug === eventSlug && v.showType === "ppv");
-}
-
 export async function getTrendingVideos(limit = 8): Promise<Video[]> {
   return [...videos]
     .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())

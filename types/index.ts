@@ -14,33 +14,7 @@ export interface Wrestler {
   finisher: string;
 }
 
-export interface Match {
-  id: string;
-  title: string;
-  participants: string[]; // wrestler slugs
-  stipulation?: string;
-  isTitleMatch?: boolean;
-  titleName?: string;
-}
-
 export type AccessLevel = "free" | "subscribers" | "purchase";
-
-export interface WwcEvent {
-  id: string;
-  slug: string;
-  title: string;
-  tagline: string;
-  posterUrl: string;
-  venue: string;
-  city: string;
-  date: string; // ISO 8601
-  status: "upcoming" | "live" | "past";
-  priceInCents: number;
-  includedInSubscription: boolean;
-  matchCard: Match[];
-  description: string;
-  streamUrl?: string;
-}
 
 export type ShowType = "ppv" | "weekly-show" | "full-match" | "highlight" | "documentary";
 

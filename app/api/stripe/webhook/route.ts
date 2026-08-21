@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
-import { addOrder, grantEventPurchase, updateUserPlan } from "@/lib/data/users";
+import { addOrder, updateUserPlan } from "@/lib/data/users";
 import type { PlanId } from "@/types";
 
 // Configure this endpoint in the Stripe CLI or Dashboard:
@@ -28,20 +28,9 @@ export async function POST(request: Request) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const { userId, eventSlug, planId } = session.metadata ?? {};
+    const { userId, planId } = session.metadata ?? {};
 
-    if (userId && eventSlug) {
-      await grantEventPurchase(userId, eventSlug);
-      await addOrder({
-        id: session.id,
-        userId,
-        type: "ppv",
-        label: `PPV Purchase — ${eventSlug}`,
-        amountInCents: session.amount_total ?? 0,
-        createdAt: new Date().toISOString(),
-        status: "paid",
-      });
-    } else if (userId && planId) {
+    if (userId && planId) {
       await updateUserPlan(userId, planId as PlanId);
       await addOrder({
         id: session.id,

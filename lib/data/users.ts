@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { users, orders } from "@/data/users";
-import type { MockUser, Order, PlanId, Video, WwcEvent } from "@/types";
+import type { MockUser, Order, PlanId, Video } from "@/types";
 
 // Repository layer over the in-memory mock user store.
 // Swap for real database calls (Prisma, Drizzle, etc.) later without touching callers.
@@ -89,13 +89,6 @@ export async function resetPasswordWithToken(token: string, newPassword: string)
   return true;
 }
 
-export async function grantEventPurchase(userId: string, eventSlug: string): Promise<void> {
-  const user = users.find((u) => u.id === userId);
-  if (user && !user.purchasedEventSlugs.includes(eventSlug)) {
-    user.purchasedEventSlugs.push(eventSlug);
-  }
-}
-
 export async function getOrdersForUser(userId: string): Promise<Order[]> {
   return orders
     .filter((o) => o.userId === userId)
@@ -141,10 +134,4 @@ export function userHasAccessToVideo(user: AccessSubject | null | undefined, vid
     return video.relatedEventSlug ? user.purchasedEventSlugs.includes(video.relatedEventSlug) : false;
   }
   return false;
-}
-
-export function userHasAccessToEvent(user: AccessSubject | null | undefined, event: WwcEvent): boolean {
-  if (event.includedInSubscription) return userHasSubscriberAccess(user);
-  if (!user) return false;
-  return user.purchasedEventSlugs.includes(event.slug);
 }

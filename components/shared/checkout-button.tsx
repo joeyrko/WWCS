@@ -7,9 +7,7 @@ import { toast } from "sonner";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import type { PlanId } from "@/types";
 
-type CheckoutPayload =
-  | { type: "subscription"; planId: PlanId }
-  | { type: "ppv"; eventSlug: string };
+type CheckoutPayload = { type: "subscription"; planId: PlanId };
 
 interface CheckoutButtonProps extends Omit<ButtonProps, "onClick" | "children"> {
   payload: CheckoutPayload;

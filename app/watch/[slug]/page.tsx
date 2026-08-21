@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar } from "lucide-react";
 import { getSession } from "@/lib/get-session";
@@ -79,15 +78,6 @@ export default async function WatchDetailPage({
                 </span>
               ))}
             </div>
-          )}
-
-          {video.relatedEventSlug && (
-            <Link
-              href={`/events/${video.relatedEventSlug}`}
-              className="mt-6 inline-block text-sm font-semibold text-wwc-red hover:underline"
-            >
-              View full event card →
-            </Link>
           )}
       </div>
 
