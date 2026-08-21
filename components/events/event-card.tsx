@@ -6,14 +6,15 @@ import { formatDate } from "@/lib/utils";
 import { getWrestlerBySlug } from "@/data/wrestlers";
 import type { WwcEvent } from "@/types";
 
-export function EventCard({ event }: { event: WwcEvent }) {
+export function EventCard({ event, watchSlug }: { event: WwcEvent; watchSlug?: string }) {
   const mainMatch = event.matchCard[0];
   const matchup = mainMatch
     ? mainMatch.participants.map((slug) => getWrestlerBySlug(slug)?.name ?? slug).join(" vs. ")
     : null;
+  const href = watchSlug ? `/watch/${watchSlug}` : `/events/${event.slug}`;
 
   return (
-    <Link href={`/events/${event.slug}`} className="group relative block w-full">
+    <Link href={href} className="group relative block w-full">
       <div className="relative z-0 transition-transform duration-300 ease-out group-hover:z-20 group-hover:scale-105">
         <div className="relative overflow-hidden rounded-sm shadow-lg shadow-black/50">
           <Poster

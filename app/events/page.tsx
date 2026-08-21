@@ -6,7 +6,7 @@ import { ContentRow } from "@/components/shared/content-row";
 import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
 import { Reveal } from "@/components/motion/reveal";
 import { getPastEvents, getUpcomingEvents } from "@/lib/data/events";
-import { searchVideos } from "@/lib/data/videos";
+import { getVideoByEventSlug, searchVideos } from "@/lib/data/videos";
 import { sponsors } from "@/data/sponsors";
 
 export const metadata: Metadata = {
@@ -22,6 +22,11 @@ export default async function EventsPage() {
   ]);
   const live = upcoming.filter((e) => e.status === "live");
   const scheduled = upcoming.filter((e) => e.status !== "live");
+
+  const pastReplays = await Promise.all(
+    past.map(async (event) => [event.slug, (await getVideoByEventSlug(event.slug))?.slug] as const)
+  );
+  const replaySlugByEvent = new Map(pastReplays);
 
   return (
     <>
@@ -64,7 +69,7 @@ export default async function EventsPage() {
           <Reveal>
             <ContentRow title="Past Events">
               {past.map((event) => (
-                <EventCard key={event.id} event={event} />
+                <EventCard key={event.id} event={event} watchSlug={replaySlugByEvent.get(event.slug)} />
               ))}
             </ContentRow>
           </Reveal>
