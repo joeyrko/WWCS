@@ -1,23 +1,18 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/get-session";
 import { getBaseUrl, stripe } from "@/lib/stripe";
+import { getStripeCustomerId } from "@/lib/data/users";
 
-// Scaffolded billing portal route. In production, store the Stripe customer ID
-// on the user record when their first Checkout session completes, then read it
-// here instead of relying on an env placeholder.
 export async function POST() {
   const session = await getSession();
   if (!session?.user) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   }
 
-  const customerId = process.env.STRIPE_MOCK_CUSTOMER_ID;
+  const customerId = await getStripeCustomerId(session.user.id);
   if (!customerId) {
     return NextResponse.json(
-      {
-        error:
-          "No Stripe customer configured for this mock account. Set STRIPE_MOCK_CUSTOMER_ID once you have a real test-mode customer.",
-      },
+      { error: "No billing account found yet — this shows up after your first completed checkout." },
       { status: 400 }
     );
   }

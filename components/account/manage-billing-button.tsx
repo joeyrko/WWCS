@@ -14,9 +14,7 @@ export function ManageBillingButton(props: Omit<ButtonProps, "onClick" | "childr
       const data = await res.json();
 
       if (!res.ok || !data.url) {
-        toast.error(data.error ?? "Billing portal isn't configured yet.", {
-          description: "Set STRIPE_MOCK_CUSTOMER_ID in .env.local once you have a real test customer.",
-        });
+        toast.error(data.error ?? "Billing portal isn't configured yet.");
         return;
       }
 

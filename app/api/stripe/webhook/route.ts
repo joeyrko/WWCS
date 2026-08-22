@@ -31,7 +31,8 @@ export async function POST(request: Request) {
     const { userId, planId } = session.metadata ?? {};
 
     if (userId && planId) {
-      await updateUserPlan(userId, planId as PlanId);
+      const customerId = typeof session.customer === "string" ? session.customer : undefined;
+      await updateUserPlan(userId, planId as PlanId, customerId);
       await addOrder({
         id: session.id,
         userId,

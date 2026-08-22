@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/get-session";
 import { stripe, getBaseUrl } from "@/lib/stripe";
 import { getPlanById } from "@/lib/data/plans";
+import { getStripeCustomerId } from "@/lib/data/users";
 import type { PlanId } from "@/types";
 
 interface SubscriptionCheckoutBody {
@@ -39,6 +40,12 @@ export async function POST(request: Request) {
         );
       }
 
+      // Reuse the existing Stripe Customer if this user already has one
+      // (e.g. re-subscribing after a lapsed plan) instead of letting
+      // Checkout mint a new one each time — customer and customer_email
+      // are mutually exclusive on the session.
+      const existingCustomerId = await getStripeCustomerId(session.user.id);
+
       const checkoutSession = await stripe.checkout.sessions.create({
         mode: "subscription",
         ui_mode: "embedded_page",
@@ -47,7 +54,9 @@ export async function POST(request: Request) {
         // need an external redirect (e.g. bank auth pages) still get one;
         // that's unavoidable, not a choice this app makes.
         redirect_on_completion: "if_required",
-        customer_email: session.user.email ?? undefined,
+        ...(existingCustomerId
+          ? { customer: existingCustomerId }
+          : { customer_email: session.user.email ?? undefined }),
         line_items: [{ price: priceId, quantity: 1 }],
         return_url: `${baseUrl}/account?checkout_session_id={CHECKOUT_SESSION_ID}`,
         metadata: { userId: session.user.id, planId: plan.id },

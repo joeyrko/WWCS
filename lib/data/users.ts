@@ -112,11 +112,33 @@ function planExpiryFromNow(planId: PlanId): string {
 // and cancellations from Stripe (invoice.paid, customer.subscription.*)
 // aren't wired up yet — this only covers the initial checkout completing,
 // since there's no live Stripe connection to test that against yet.
-export async function updateUserPlan(userId: string, plan: PlanId): Promise<void> {
+// stripeCustomerId is recorded here too when known (the checkout webhook is
+// the only place that learns it) so the billing portal can look it up later.
+export async function updateUserPlan(
+  userId: string,
+  plan: PlanId,
+  stripeCustomerId?: string
+): Promise<void> {
   await supabase
     .from("users")
-    .update({ plan, plan_expires_at: planExpiryFromNow(plan) })
+    .update({
+      plan,
+      plan_expires_at: planExpiryFromNow(plan),
+      ...(stripeCustomerId ? { stripe_customer_id: stripeCustomerId } : {}),
+    })
     .eq("id", userId);
+}
+
+// Looked up by the billing portal route to send a subscriber to their real
+// Stripe-hosted portal session — null means they've never completed a
+// checkout (e.g. plan was granted some other way), not that something broke.
+export async function getStripeCustomerId(userId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from("users")
+    .select("stripe_customer_id")
+    .eq("id", userId)
+    .maybeSingle();
+  return data?.stripe_customer_id ?? null;
 }
 
 // Reset tokens are single-use and short-lived, so only a hash is persisted —
