@@ -42,6 +42,11 @@ export async function POST(request: Request) {
       const checkoutSession = await stripe.checkout.sessions.create({
         mode: "subscription",
         ui_mode: "embedded_page",
+        // Cards (the common case) complete in place with no page navigation
+        // at all — the widget just closes. Payment methods that inherently
+        // need an external redirect (e.g. bank auth pages) still get one;
+        // that's unavoidable, not a choice this app makes.
+        redirect_on_completion: "if_required",
         customer_email: session.user.email ?? undefined,
         line_items: [{ price: priceId, quantity: 1 }],
         return_url: `${baseUrl}/account?checkout_session_id={CHECKOUT_SESSION_ID}`,

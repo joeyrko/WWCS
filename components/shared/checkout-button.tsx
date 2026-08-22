@@ -56,6 +56,12 @@ export function CheckoutButton({ payload, children, ...buttonProps }: CheckoutBu
     return data.clientSecret as string;
   }
 
+  function handleComplete() {
+    setOpen(false);
+    toast.success("Payment received — your plan will be active in a moment.");
+    router.refresh();
+  }
+
   return (
     <>
       <Button onClick={handleClick} {...buttonProps}>
@@ -66,7 +72,10 @@ export function CheckoutButton({ payload, children, ...buttonProps }: CheckoutBu
         <DialogContent className="max-w-2xl border-none bg-transparent p-0 shadow-none">
           <DialogTitle className="sr-only">Checkout</DialogTitle>
           {open && (
-            <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>
+            <EmbeddedCheckoutProvider
+              stripe={stripePromise}
+              options={{ fetchClientSecret, onComplete: handleComplete }}
+            >
               <EmbeddedCheckout />
             </EmbeddedCheckoutProvider>
           )}
