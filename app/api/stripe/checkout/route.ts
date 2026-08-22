@@ -41,14 +41,14 @@ export async function POST(request: Request) {
 
       const checkoutSession = await stripe.checkout.sessions.create({
         mode: "subscription",
+        ui_mode: "embedded_page",
         customer_email: session.user.email ?? undefined,
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `${baseUrl}/account?checkout=success`,
-        cancel_url: `${baseUrl}/pricing?checkout=cancelled`,
+        return_url: `${baseUrl}/account?checkout_session_id={CHECKOUT_SESSION_ID}`,
         metadata: { userId: session.user.id, planId: plan.id },
       });
 
-      return NextResponse.json({ url: checkoutSession.url });
+      return NextResponse.json({ clientSecret: checkoutSession.client_secret });
     }
 
     return NextResponse.json({ error: "Invalid checkout type." }, { status: 400 });
