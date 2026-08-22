@@ -52,6 +52,17 @@ export async function findUserById(id: string): Promise<MockUser | undefined> {
   return data ? toMockUser(data) : undefined;
 }
 
+// Used by the Stripe webhook to resolve which user a subscription/invoice
+// event belongs to — events carry a Stripe customer id, not our user id.
+export async function findUserByStripeCustomerId(customerId: string): Promise<MockUser | undefined> {
+  const { data } = await supabase
+    .from("users")
+    .select("*")
+    .eq("stripe_customer_id", customerId)
+    .maybeSingle();
+  return data ? toMockUser(data) : undefined;
+}
+
 export async function verifyPassword(user: MockUser, password: string): Promise<boolean> {
   if (!user.passwordHash) return false;
   return bcrypt.compare(password, user.passwordHash);
@@ -108,12 +119,12 @@ function planExpiryFromNow(planId: PlanId): string {
   return expires.toISOString();
 }
 
-// Sets the plan and (re)starts its expiration window from today. Renewals
-// and cancellations from Stripe (invoice.paid, customer.subscription.*)
-// aren't wired up yet — this only covers the initial checkout completing,
-// since there's no live Stripe connection to test that against yet.
-// stripeCustomerId is recorded here too when known (the checkout webhook is
-// the only place that learns it) so the billing portal can look it up later.
+// Sets the plan and (re)starts its expiration window from today. Called on
+// initial checkout, on each successful renewal invoice, and when a
+// subscription's price changes (upgrade/downgrade via the billing portal).
+// stripeCustomerId is only passed on initial checkout, since that's the only
+// place it's newly learned — later calls omit it and leave the stored value
+// alone.
 export async function updateUserPlan(
   userId: string,
   plan: PlanId,
@@ -127,6 +138,13 @@ export async function updateUserPlan(
       ...(stripeCustomerId ? { stripe_customer_id: stripeCustomerId } : {}),
     })
     .eq("id", userId);
+}
+
+// Called when a subscription is fully canceled (customer.subscription.deleted)
+// — the stripe_customer_id stays on the row so re-subscribing later reuses
+// the same Stripe Customer instead of creating a duplicate.
+export async function clearUserPlan(userId: string): Promise<void> {
+  await supabase.from("users").update({ plan: null, plan_expires_at: null }).eq("id", userId);
 }
 
 // Looked up by the billing portal route to send a subscriber to their real

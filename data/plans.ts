@@ -1,10 +1,8 @@
 import type { Plan } from "@/types";
 
 // Every plan here is paid — there is no free tier and no free access to
-// gated content. Signing up still creates an account without payment
-// (PlanId "free" internally, see lib/data/users.ts) since checkout requires
-// an existing session, but that state grants no library/event access —
-// it's purely a placeholder until a plan is purchased.
+// gated content. A signed-up account with no plan (plan: null) grants no
+// library/event access; it's purely a placeholder until a plan is purchased.
 export const plans: Plan[] = [
   {
     id: "monthly",
@@ -50,4 +48,10 @@ export const plans: Plan[] = [
 
 export function getPlanById(id: string) {
   return plans.find((p) => p.id === id);
+}
+
+// Maps a Stripe Price ID back to our plan — used by the webhook to figure
+// out which plan an invoice/subscription event refers to.
+export function getPlanByStripePriceId(priceId: string) {
+  return plans.find((p) => p.stripePriceEnvVar && process.env[p.stripePriceEnvVar] === priceId);
 }
