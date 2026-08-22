@@ -38,7 +38,7 @@ export const plans: Plan[] = [
     features: [
       "Access to the entire library",
       "Access to live events",
-      "1 general admission ticket to each of our 4 biggest events of the year, a total of $60 value",
+      "One general admission ticket to each of our four biggest events of the year — a $60 value",
       "One photo with your favorite wrestler per event",
       "Cancel anytime",
     ],
