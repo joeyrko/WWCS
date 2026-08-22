@@ -13,6 +13,8 @@ const PUBLIC_PATHS = new Set([
   "/manifest.webmanifest",
   "/robots.txt",
   "/sitemap.xml",
+  "/privacy",
+  "/terms",
 ]);
 
 // Reachable even by a signed-in user with no active plan — must include

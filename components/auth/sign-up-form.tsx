@@ -110,6 +110,18 @@ export function SignUpForm({ callbackUrl }: { callbackUrl: string }) {
           Sign in
         </Link>
       </p>
+
+      <p className="text-center text-xs text-wwc-grey-600">
+        By creating an account, you agree to our{" "}
+        <Link href="/terms" className="hover:text-wwc-grey-400 hover:underline">
+          Terms of Service
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="hover:text-wwc-grey-400 hover:underline">
+          Privacy Policy
+        </Link>
+        .
+      </p>
     </form>
   );
 }
