@@ -34,3 +34,26 @@ app
     console.error("Failed to start server:", err);
     process.exit(1);
   });
+
+// Next's programmatic API (unlike the `next start` CLI) registers no
+// SIGTERM/SIGINT handling of its own, so without this the host's redeploy
+// signal just kills the process mid-request. Guarded with `shuttingDown` and
+// `httpServer.listening` because a host can send the signal twice, or before
+// `listen()` above has even resolved — closing a server that was created but
+// never started throws "Error: Server is not running".
+let shuttingDown = false;
+function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`> Received ${signal}, shutting down...`);
+  if (!httpServer.listening) {
+    process.exit(0);
+    return;
+  }
+  httpServer.close((err) => {
+    if (err) console.error("Error during shutdown:", err);
+    process.exit(err ? 1 : 0);
+  });
+}
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
