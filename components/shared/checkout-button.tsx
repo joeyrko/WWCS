@@ -69,7 +69,7 @@ export function CheckoutButton({ payload, children, ...buttonProps }: CheckoutBu
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl border-none bg-transparent p-0 shadow-none">
+        <DialogContent className="max-w-md border-none bg-transparent p-0 shadow-none">
           <DialogTitle className="sr-only">Checkout</DialogTitle>
           {open && (
             <EmbeddedCheckoutProvider
