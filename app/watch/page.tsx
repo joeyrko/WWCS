@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { SearchX } from "lucide-react";
 import { StaggerIn } from "@/components/motion/stagger-in";
 import { HeroSlideshow } from "@/components/shared/hero-slideshow";
-import { FiltersBar } from "@/components/watch/filters-bar";
 import { VideoCard } from "@/components/watch/video-card";
 import { ContentRow } from "@/components/shared/content-row";
 import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
@@ -57,9 +56,6 @@ export default async function WatchPage({
             Watch Library
           </h1>
           <p className="mt-3 max-w-2xl text-wwc-grey-400">Full shows— anytime.</p>
-          <div className="mt-6 w-full max-w-sm">
-            <FiltersBar current={{ q, type, wrestler, sort }} />
-          </div>
         </StaggerIn>
       </section>
 
