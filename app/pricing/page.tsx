@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Check, PlayCircle } from "lucide-react";
+import { Check } from "lucide-react";
 import { getSession } from "@/lib/get-session";
 import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/shared/checkout-button";
@@ -19,6 +18,7 @@ export const metadata: Metadata = {
 export default async function PricingPage() {
   const session = await getSession();
   if (!session?.user) redirect("/sign-in?callbackUrl=/pricing");
+  if (session.user.plan) redirect("/events");
 
   const plans = await getAllPlans();
   const currentPlan = session.user.plan;
@@ -36,23 +36,6 @@ export default async function PricingPage() {
           <span className="mb-4 inline-block rounded-sm border border-wwc-red/50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wwc-red">
             WWC+ Streaming Platform
           </span>
-          <h1 className="text-gradient-red font-display text-5xl uppercase leading-[0.95] tracking-wide sm:text-6xl lg:text-7xl">
-            Every Fight. Every Show.
-          </h1>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-wwc-grey-300">
-            Live pay-per-view events and the full on-demand library from World Wrestling
-            Council — anytime, anywhere. Pick a plan to get started.
-          </p>
-
-          {session.user.plan && (
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <Button asChild size="lg">
-                <Link href="/events" className="flex items-center gap-2">
-                  <PlayCircle className="h-5 w-5" /> Enter WWC+
-                </Link>
-              </Button>
-            </div>
-          )}
         </StaggerIn>
       </section>
 
