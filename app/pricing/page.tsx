@@ -5,7 +5,6 @@ import { getSession } from "@/lib/get-session";
 import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/shared/checkout-button";
 import { StaggerGrid } from "@/components/motion/stagger-grid";
-import { StaggerIn } from "@/components/motion/stagger-in";
 import { getAllPlans } from "@/lib/data/plans";
 import { cn } from "@/lib/utils";
 
@@ -29,17 +28,9 @@ export default async function PricingPage() {
         aria-hidden
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(224,20,26,0.24),transparent)]"
       />
-      <div className="clip-diagonal absolute inset-x-0 top-0 -z-20 h-[80vh] bg-gradient-to-br from-wwc-red-dark/25 via-wwc-black to-wwc-black" />
+      <div className="clip-diagonal absolute inset-x-0 top-0 -z-20 h-[60vh] bg-gradient-to-br from-wwc-red-dark/25 via-wwc-black to-wwc-black" />
 
-      <section className="mx-auto flex min-h-[80vh] max-w-5xl flex-col justify-center px-4 pb-10 pt-24 text-center sm:px-6 sm:pt-32 lg:px-8">
-        <StaggerIn>
-          <span className="mb-4 inline-block rounded-sm border border-wwc-red/50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wwc-red">
-            WWC+ Streaming Platform
-          </span>
-        </StaggerIn>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl px-4 pb-20 pt-28 sm:px-6 sm:pt-36 lg:px-8">
         <StaggerGrid className="grid gap-6 md:grid-cols-3">
           {plans.map((plan) => {
             const isCurrent = currentPlan === plan.id;
