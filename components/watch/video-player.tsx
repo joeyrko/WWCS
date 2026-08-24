@@ -8,6 +8,7 @@ const TRAILER_SRC = "/mock-media/trailer.mp4";
 export function VideoPlayer({ src, title }: { src: string; title: string }) {
   const embed = getVideoEmbed(src);
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   // Every video/stream opens with this trailer first — no way to skip it,
   // it just plays through and onEnded below hands off to the real content.
   const [showTrailer, setShowTrailer] = useState(true);
@@ -20,6 +21,24 @@ export function VideoPlayer({ src, title }: { src: string; title: string }) {
       // iOS Safari only exposes fullscreen on the <video> element itself.
       (target as HTMLVideoElement & { webkitEnterFullscreen?: () => void }).webkitEnterFullscreen?.();
     }
+  }
+
+  function handleTrailerEnded() {
+    setShowTrailer(false);
+    if (embed.kind !== "file") return;
+    // Browsers only allow autoplay-with-sound as a continuation of an
+    // already-playing <video> element's own "ended" event — a freshly
+    // mounted element (or an <iframe> embed) has no such allowance and just
+    // sits paused. So this reuses the trailer's own element instead of
+    // swapping to a new one, and starts the real content synchronously
+    // within this handler rather than waiting on React's re-render.
+    const el = videoRef.current;
+    if (!el) return;
+    el.src = src;
+    el.load();
+    el.play()
+      .then(() => enterFullscreen(el))
+      .catch(() => {});
   }
 
   useEffect(() => {
@@ -35,28 +54,16 @@ export function VideoPlayer({ src, title }: { src: string; title: string }) {
 
   return (
     <div ref={containerRef} className="relative overflow-hidden rounded-md border border-wwc-grey-800 bg-black">
-      {showTrailer ? (
+      {showTrailer || embed.kind === "file" ? (
         <video
-          key="trailer"
-          autoPlay
+          ref={videoRef}
+          autoPlay={showTrailer}
           controls
           className="aspect-video w-full"
           onPlay={(e) => enterFullscreen(e.currentTarget)}
-          onEnded={() => setShowTrailer(false)}
+          onEnded={showTrailer ? handleTrailerEnded : undefined}
         >
-          <source src={TRAILER_SRC} />
-        </video>
-      ) : embed.kind === "file" ? (
-        <video
-          key={src}
-          autoPlay
-          controls
-          className="aspect-video w-full"
-          // Fires as soon as playback actually starts — covers both the
-          // autoplay above and a manual click on the native controls.
-          onPlay={(e) => enterFullscreen(e.currentTarget)}
-        >
-          <source src={src} />
+          <source src={showTrailer ? TRAILER_SRC : src} />
         </video>
       ) : (
         <iframe
