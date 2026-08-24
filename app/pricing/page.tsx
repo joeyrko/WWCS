@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/shared/checkout-button";
 import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { getAllPlans } from "@/lib/data/plans";
+import { isTvApp } from "@/lib/tv-app";
 import { cn } from "@/lib/utils";
+import type { Plan } from "@/types";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -19,7 +21,7 @@ export default async function PricingPage() {
   if (!session?.user) redirect("/sign-in?callbackUrl=/pricing");
   if (session.user.plan) redirect("/events");
 
-  const plans = await getAllPlans();
+  const [plans, tvApp] = await Promise.all([getAllPlans(), isTvApp()]);
   const currentPlan = session.user.plan;
 
   return (
@@ -73,35 +75,11 @@ export default async function PricingPage() {
 
                 {plan.highlighted ? (
                   <div className="absolute inset-x-0 bottom-0 rounded-b-md bg-gradient-to-t from-wwc-grey-950 via-wwc-grey-950/95 to-transparent px-7 pb-7 pt-10">
-                    {isCurrent ? (
-                      <Button variant="outline" className="w-full" disabled>
-                        Current Plan
-                      </Button>
-                    ) : (
-                      <CheckoutButton
-                        payload={{ type: "subscription", planId: plan.id }}
-                        variant="primary"
-                        className="w-full shadow-lg shadow-black/40"
-                      >
-                        Choose {plan.name}
-                      </CheckoutButton>
-                    )}
+                    <PlanAction plan={plan} isCurrent={isCurrent} tvApp={tvApp} variant="primary" />
                   </div>
                 ) : (
                   <div className="mt-7">
-                    {isCurrent ? (
-                      <Button variant="outline" className="w-full" disabled>
-                        Current Plan
-                      </Button>
-                    ) : (
-                      <CheckoutButton
-                        payload={{ type: "subscription", planId: plan.id }}
-                        variant="outline"
-                        className="w-full"
-                      >
-                        Choose {plan.name}
-                      </CheckoutButton>
-                    )}
+                    <PlanAction plan={plan} isCurrent={isCurrent} tvApp={tvApp} variant="outline" />
                   </div>
                 )}
               </div>
@@ -115,5 +93,47 @@ export default async function PricingPage() {
         </p>
       </section>
     </div>
+  );
+}
+
+function PlanAction({
+  plan,
+  isCurrent,
+  tvApp,
+  variant,
+}: {
+  plan: Plan;
+  isCurrent: boolean;
+  tvApp: boolean;
+  variant: "primary" | "outline";
+}) {
+  if (isCurrent) {
+    return (
+      <Button variant="outline" className="w-full" disabled>
+        Current Plan
+      </Button>
+    );
+  }
+
+  // TV app storefronts (Fire TV, LG, Samsung) require digital subscriptions
+  // to go through their own in-app purchasing, not a checkout embedded in
+  // the app — so point users to subscribe from a browser instead.
+  if (tvApp) {
+    return (
+      <p className="text-center text-sm text-wwc-grey-400">
+        Subscribe at <span className="font-semibold text-white">wwcnow.com</span> from your
+        phone or computer.
+      </p>
+    );
+  }
+
+  return (
+    <CheckoutButton
+      payload={{ type: "subscription", planId: plan.id }}
+      variant={variant}
+      className={cn("w-full", variant === "primary" && "shadow-lg shadow-black/40")}
+    >
+      Choose {plan.name}
+    </CheckoutButton>
   );
 }
