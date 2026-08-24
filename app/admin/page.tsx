@@ -11,7 +11,7 @@ import { FreeAccessToggle } from "@/components/admin/free-access-toggle";
 import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
 import { getFreeAccessUntil, isFreeAccessActive } from "@/lib/data/settings";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import type { AccessLevel, Order } from "@/types";
+import type { Order } from "@/types";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -26,12 +26,6 @@ function StatCard({ label, value }: { label: string; value: string | number }) {
     </div>
   );
 }
-
-const ACCESS_VARIANT: Record<AccessLevel, "free" | "subscribers" | "purchase"> = {
-  free: "free",
-  subscribers: "subscribers",
-  purchase: "purchase",
-};
 
 const ORDER_STATUS_VARIANT: Record<Order["status"], "subscribers" | "default" | "purchase"> = {
   paid: "subscribers",
@@ -164,36 +158,6 @@ export default async function AdminPage() {
                   </tr>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2 className="mb-4 font-display text-2xl uppercase tracking-wide text-white">
-          Videos ({videos.length})
-        </h2>
-        <div className="overflow-x-auto rounded-md border border-wwc-grey-800">
-          <table className="w-full min-w-[420px] text-left text-sm">
-            <thead className="bg-wwc-grey-900 text-xs uppercase tracking-wide text-wwc-grey-400">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Title</th>
-                <th className="px-4 py-3 font-semibold">Show Type</th>
-                <th className="px-4 py-3 font-semibold">Access</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-wwc-grey-800 bg-wwc-grey-950">
-              {videos.map((video) => (
-                <tr key={video.id}>
-                  <td className="px-4 py-3 text-white">{video.title}</td>
-                  <td className="px-4 py-3 uppercase text-wwc-grey-400">{video.showType}</td>
-                  <td className="px-4 py-3">
-                    <Badge variant={ACCESS_VARIANT[video.access]} className="capitalize">
-                      {video.access}
-                    </Badge>
-                  </td>
-                </tr>
-              ))}
             </tbody>
           </table>
         </div>
