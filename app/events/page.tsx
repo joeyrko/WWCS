@@ -62,9 +62,12 @@ export default async function HomePage({
             WWC+
           </span>
           <h1 className="font-display text-4xl uppercase tracking-wide text-white sm:text-5xl">
-            Home
+            Every Match. Every Replay. Unlimited Access.
           </h1>
-          <p className="mt-3 max-w-2xl text-wwc-grey-400">Every show, every replay — anytime.</p>
+          <p className="mt-3 max-w-2xl text-wwc-grey-400">
+            Grab your tickets, cop official gear, and catch the latest news at
+            WORLDWRESTLINGCOUNCIL.COM.
+          </p>
         </StaggerIn>
       </section>
 
