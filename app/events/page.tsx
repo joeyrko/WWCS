@@ -29,6 +29,7 @@ const DECADE_LABELS: Record<number, string> = {
 const DECADES = [1970, 1990, 2000];
 const UPCOMING_DECADE = 1980;
 const ROW_ITEM_CLASS = "w-60 sm:w-72 lg:w-80";
+const LIVE_ITEM_CLASS = "w-80 sm:w-[26rem] lg:w-[34rem]";
 
 function decadeOf(publishedAt: string): number {
   return Math.floor(new Date(publishedAt).getFullYear() / 10) * 10;
@@ -100,7 +101,10 @@ function BrowseRows({ videos }: { videos: Video[] }) {
         if (rowVideos.length === 0) return null;
         return (
           <Reveal key={decade}>
-            <ContentRow title={DECADE_LABELS[decade]} itemClassName={ROW_ITEM_CLASS}>
+            <ContentRow
+              title={DECADE_LABELS[decade]}
+              itemClassName={decade === 1970 ? LIVE_ITEM_CLASS : ROW_ITEM_CLASS}
+            >
               {rowVideos.map((video) => (
                 <VideoCard
                   key={video.id}
