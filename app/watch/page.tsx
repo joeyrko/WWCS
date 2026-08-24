@@ -50,7 +50,7 @@ export default async function WatchPage({
         <HeroSlideshow videos={upcoming} />
         <StaggerIn className="relative z-10 mx-auto flex max-w-7xl flex-col items-center px-4 text-center sm:px-6 lg:px-8">
           <span className="mb-3 inline-block rounded-sm border border-wwc-red/50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wwc-red">
-            On-Demand
+            WWC+
           </span>
           <h1 className="font-display text-4xl uppercase tracking-wide text-white sm:text-5xl">
             Legends. Lore. Legacy.
