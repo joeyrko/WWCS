@@ -11,7 +11,15 @@ const SHOW_TYPE_LABEL: Record<Video["showType"], string> = {
   documentary: "Documentary",
 };
 
-export function VideoCard({ video, className }: { video: Video; className?: string }) {
+export function VideoCard({
+  video,
+  className,
+  aspect = "square",
+}: {
+  video: Video;
+  className?: string;
+  aspect?: "poster" | "video" | "square";
+}) {
   return (
     <Link
       href={`/events/${video.slug}`}
@@ -22,7 +30,7 @@ export function VideoCard({ video, className }: { video: Video; className?: stri
           <Poster
             seed={video.slug}
             title={video.title}
-            aspect="square"
+            aspect={aspect}
             monogram={false}
             showLabel={false}
           />

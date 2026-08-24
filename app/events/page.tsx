@@ -95,14 +95,18 @@ function BrowseRows({ videos }: { videos: Video[] }) {
     <div className="flex flex-col gap-10 py-10 sm:py-14">
       {DECADES.map((decade) => {
         const decadeVideos = byDecade.get(decade) ?? [];
-        // "Live" only ever shows its first two cards — trim the rest.
+        // "Live" drops its last two cards, keeping just the first.
         const rowVideos = decade === 1970 ? decadeVideos.slice(0, -2) : decadeVideos;
         if (rowVideos.length === 0) return null;
         return (
           <Reveal key={decade}>
             <ContentRow title={DECADE_LABELS[decade]} itemClassName={ROW_ITEM_CLASS}>
               {rowVideos.map((video) => (
-                <VideoCard key={video.id} video={video} />
+                <VideoCard
+                  key={video.id}
+                  video={video}
+                  aspect={decade === 1970 ? "video" : "square"}
+                />
               ))}
             </ContentRow>
           </Reveal>
