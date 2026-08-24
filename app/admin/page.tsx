@@ -7,7 +7,9 @@ import { getAllVideos } from "@/lib/data/videos";
 import { getAllWrestlers } from "@/lib/data/wrestlers";
 import { Badge } from "@/components/ui/badge";
 import { AdminPinGate } from "@/components/admin/admin-pin-gate";
+import { FreeAccessToggle } from "@/components/admin/free-access-toggle";
 import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
+import { getFreeAccessUntil, isFreeAccessActive } from "@/lib/data/settings";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { AccessLevel, Order } from "@/types";
 
@@ -45,11 +47,13 @@ export default async function AdminPage() {
   const pinVerified = cookieStore.get(ADMIN_PIN_COOKIE)?.value === "verified";
   if (!pinVerified) return <AdminPinGate />;
 
-  const [users, orders, videos, wrestlers] = await Promise.all([
+  const [users, orders, videos, wrestlers, freeAccessUntil, freeAccessActive] = await Promise.all([
     getAllUsers(),
     getAllOrders(),
     getAllVideos(),
     getAllWrestlers(),
+    getFreeAccessUntil(),
+    isFreeAccessActive(),
   ]);
 
   const revenueInCents = orders
@@ -81,6 +85,13 @@ export default async function AdminPage() {
         <StatCard label="Revenue" value={formatCurrency(revenueInCents)} />
         <StatCard label="Videos" value={videos.length} />
         <StatCard label="Roster" value={wrestlers.length} />
+      </div>
+
+      <div className="mb-10">
+        <FreeAccessToggle
+          freeAccessUntil={freeAccessUntil ? freeAccessUntil.toISOString() : null}
+          active={freeAccessActive}
+        />
       </div>
 
       <section className="mb-10">

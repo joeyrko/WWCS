@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { isFreeAccessActive } from "@/lib/data/settings";
 
 // Routes reachable without an account. Everything else redirects signed-out
 // visitors to sign in first — they pick a plan at /pricing once they have an
@@ -21,7 +22,7 @@ const PUBLIC_PATHS = new Set([
 // /pricing itself (otherwise there'd be no way to ever reach it).
 const PLAN_EXEMPT_PATHS = new Set([...PUBLIC_PATHS, "/pricing"]);
 
-export default auth((req) => {
+export default auth(async (req) => {
   const { pathname } = req.nextUrl;
 
   if (!req.auth) {
@@ -33,7 +34,9 @@ export default auth((req) => {
 
   // Signed in but no active plan — block browsing the rest of the site
   // until a plan is chosen, instead of only gating individual videos/events.
-  if (!req.auth.user.plan && !PLAN_EXEMPT_PATHS.has(pathname)) {
+  // The free-access promo (see lib/data/settings.ts, toggled from /admin)
+  // lifts this specific check — everything past it still applies normally.
+  if (!req.auth.user.plan && !PLAN_EXEMPT_PATHS.has(pathname) && !(await isFreeAccessActive())) {
     return NextResponse.redirect(new URL("/pricing", req.nextUrl.origin));
   }
 

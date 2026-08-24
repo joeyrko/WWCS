@@ -269,7 +269,12 @@ export function userHasSubscriberAccess(user: AccessSubject | null | undefined):
   return !!user && user.plan !== null;
 }
 
-export function userHasAccessToVideo(user: AccessSubject | null | undefined, video: Video): boolean {
+export function userHasAccessToVideo(
+  user: AccessSubject | null | undefined,
+  video: Video,
+  freeAccessActive = false
+): boolean {
+  if (freeAccessActive) return true;
   if (video.access === "free") return true;
   if (video.access === "subscribers") return userHasSubscriberAccess(user);
   if (video.access === "purchase") {

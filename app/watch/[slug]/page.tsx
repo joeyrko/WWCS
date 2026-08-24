@@ -6,6 +6,7 @@ import { videos } from "@/data/videos";
 import { getRelatedVideos, getVideoBySlug } from "@/lib/data/videos";
 import { getWrestlersBySlugs } from "@/lib/data/wrestlers";
 import { userHasAccessToVideo } from "@/lib/data/users";
+import { isFreeAccessActive } from "@/lib/data/settings";
 import { VideoPlayer } from "@/components/watch/video-player";
 import { AccessGate } from "@/components/watch/access-gate";
 import { RelatedVideosRail } from "@/components/watch/related-videos-rail";
@@ -40,13 +41,14 @@ export default async function WatchDetailPage({
   const video = await getVideoBySlug(slug);
   if (!video) notFound();
 
-  const [session, related, wrestlers] = await Promise.all([
+  const [session, related, wrestlers, freeAccessActive] = await Promise.all([
     getSession(),
     getRelatedVideos(video),
     getWrestlersBySlugs(video.wrestlers),
+    isFreeAccessActive(),
   ]);
 
-  const hasAccess = userHasAccessToVideo(session?.user, video);
+  const hasAccess = userHasAccessToVideo(session?.user, video, freeAccessActive);
 
   return (
     <div className="pt-24 sm:pt-28">
