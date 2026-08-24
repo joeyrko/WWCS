@@ -148,6 +148,63 @@ export async function clearUserPlan(userId: string): Promise<void> {
   await supabase.from("users").update({ plan: null, plan_expires_at: null }).eq("id", userId);
 }
 
+// Admin-only account management (/admin) — distinct from createUser (used by
+// self-registration) because an admin can set the plan and admin flag
+// directly, and doesn't need the "already exists" check to be the caller's
+// first move (it still happens, just as part of one call here).
+export async function adminCreateUser(input: {
+  name: string;
+  email: string;
+  password: string;
+  plan: PlanId | null;
+  isAdmin: boolean;
+}): Promise<MockUser> {
+  const existing = await findUserByEmail(input.email);
+  if (existing) {
+    throw new Error("An account with that email already exists.");
+  }
+  const { data, error } = await supabase
+    .from("users")
+    .insert({
+      name: input.name,
+      email: input.email.toLowerCase(),
+      password_hash: bcrypt.hashSync(input.password, 10),
+      plan: input.plan,
+      plan_expires_at: input.plan ? planExpiryFromNow(input.plan) : null,
+      is_admin: input.isAdmin,
+    })
+    .select("*")
+    .single();
+  if (error || !data) throw new Error("Unable to create account.");
+  return toMockUser(data);
+}
+
+export async function adminUpdateUser(
+  id: string,
+  input: { name: string; email: string; plan: PlanId | null; isAdmin: boolean }
+): Promise<MockUser> {
+  const { data, error } = await supabase
+    .from("users")
+    .update({
+      name: input.name,
+      email: input.email.toLowerCase(),
+      plan: input.plan,
+      plan_expires_at: input.plan ? planExpiryFromNow(input.plan) : null,
+      is_admin: input.isAdmin,
+    })
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error || !data) throw new Error("Unable to update account.");
+  return toMockUser(data);
+}
+
+// orders and password_reset_tokens both cascade-delete on user_id, so this
+// is the only query needed to fully remove an account.
+export async function deleteUser(id: string): Promise<void> {
+  await supabase.from("users").delete().eq("id", id);
+}
+
 // Looked up by the billing portal route to send a subscriber to their real
 // Stripe-hosted portal session — null means they've never completed a
 // checkout (e.g. plan was granted some other way), not that something broke.

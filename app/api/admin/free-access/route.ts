@@ -1,17 +1,8 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { getSession } from "@/lib/get-session";
-import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
+import { requireAdmin } from "@/lib/admin-pin";
 import { setFreeAccessUntil } from "@/lib/data/settings";
 
 const FREE_ACCESS_DURATION_MS = 24 * 60 * 60 * 1000;
-
-async function requireAdmin() {
-  const session = await getSession();
-  if (!session?.user?.isAdmin) return false;
-  const cookieStore = await cookies();
-  return cookieStore.get(ADMIN_PIN_COOKIE)?.value === "verified";
-}
 
 export async function POST(request: Request) {
   if (!(await requireAdmin())) {

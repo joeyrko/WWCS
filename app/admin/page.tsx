@@ -6,6 +6,7 @@ import { getAllUsers, getAllOrders } from "@/lib/data/users";
 import { Badge } from "@/components/ui/badge";
 import { AdminPinGate } from "@/components/admin/admin-pin-gate";
 import { FreeAccessToggle } from "@/components/admin/free-access-toggle";
+import { UserManager, type AdminUserRow } from "@/components/admin/user-manager";
 import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
 import { getFreeAccessUntil, isFreeAccessActive } from "@/lib/data/settings";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -55,6 +56,19 @@ export default async function AdminPage() {
     orderCountByUser.set(order.userId, (orderCountByUser.get(order.userId) ?? 0) + 1);
   }
 
+  // Strips password_hash/image before this ever reaches a client component
+  // prop — Next.js serializes that prop into the page payload regardless of
+  // what the component actually renders.
+  const userRows: AdminUserRow[] = users.map((user) => ({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    plan: user.plan,
+    purchasedEventCount: user.purchasedEventSlugs.length,
+    orderCount: orderCountByUser.get(user.id) ?? 0,
+    isAdmin: !!user.isAdmin,
+  }));
+
   return (
     <div className="mx-auto max-w-7xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28 lg:px-8">
       <div className="mb-8">
@@ -65,7 +79,7 @@ export default async function AdminPage() {
           Quality Control
         </h1>
         <p className="mt-2 text-wwc-grey-400">
-          Signed in as {session.user.email}. Read-only overview of accounts, orders, and content.
+          Signed in as {session.user.email}. Manage accounts and review orders.
         </p>
       </div>
 
@@ -83,35 +97,7 @@ export default async function AdminPage() {
       </div>
 
       <section className="mb-10">
-        <h2 className="mb-4 font-display text-2xl uppercase tracking-wide text-white">Users</h2>
-        <div className="overflow-x-auto rounded-md border border-wwc-grey-800">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="bg-wwc-grey-900 text-xs uppercase tracking-wide text-wwc-grey-400">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Name</th>
-                <th className="px-4 py-3 font-semibold">Email</th>
-                <th className="px-4 py-3 font-semibold">Plan</th>
-                <th className="px-4 py-3 font-semibold">Purchases</th>
-                <th className="px-4 py-3 font-semibold">Orders</th>
-                <th className="px-4 py-3 font-semibold">Role</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-wwc-grey-800 bg-wwc-grey-950">
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td className="px-4 py-3 text-white">{user.name}</td>
-                  <td className="px-4 py-3 text-wwc-grey-400">{user.email}</td>
-                  <td className="px-4 py-3 uppercase text-wwc-grey-300">{user.plan ?? "No Plan"}</td>
-                  <td className="px-4 py-3 text-wwc-grey-400">{user.purchasedEventSlugs.length}</td>
-                  <td className="px-4 py-3 text-wwc-grey-400">{orderCountByUser.get(user.id) ?? 0}</td>
-                  <td className="px-4 py-3">
-                    {user.isAdmin && <Badge variant="subscribers">Admin</Badge>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <UserManager users={userRows} currentUserId={session.user.id} />
       </section>
 
       <section className="mb-10">
