@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { supabase } from "@/lib/supabase";
 import { plans } from "@/data/plans";
+import { FREE_ACCESS_PROMO_SLUG } from "@/lib/data/settings";
 import type { MockUser, Order, PlanId, Video } from "@/types";
 
 // Repository layer over Supabase Postgres (see lib/supabase.ts). Every read
@@ -274,7 +275,7 @@ export function userHasAccessToVideo(
   video: Video,
   freeAccessActive = false
 ): boolean {
-  if (freeAccessActive) return true;
+  if (freeAccessActive && video.slug === FREE_ACCESS_PROMO_SLUG) return true;
   if (video.access === "free") return true;
   if (video.access === "subscribers") return userHasSubscriberAccess(user);
   if (video.access === "purchase") {

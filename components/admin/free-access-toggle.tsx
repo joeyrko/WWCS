@@ -28,7 +28,11 @@ export function FreeAccessToggle({
         toast.error("Something went wrong updating free access.");
         return;
       }
-      toast.success(action === "enable" ? "Free access enabled for 24 hours." : "Free access disabled.");
+      toast.success(
+        action === "enable"
+          ? "Live Event free access enabled for 24 hours."
+          : "Live Event free access disabled."
+      );
       router.refresh();
     } catch {
       toast.error("Something went wrong updating free access.");
@@ -46,7 +50,7 @@ export function FreeAccessToggle({
         <p className="mt-1 text-sm text-white">
           {active ? (
             <>
-              Active — the paywall is down for everyone until{" "}
+              Active — the current Live Event is free to watch for everyone until{" "}
               {formatDate(freeAccessUntil as string, {
                 weekday: undefined,
                 month: "short",
@@ -54,10 +58,11 @@ export function FreeAccessToggle({
                 hour: "numeric",
                 minute: "2-digit",
               })}
-              , then it reverts automatically.
+              , then it reverts automatically. Everything else stays behind its normal access
+              level.
             </>
           ) : (
-            "Inactive — all content is behind its normal access level."
+            "Inactive — all content, including the Live Event, is behind its normal access level."
           )}
         </p>
       </div>

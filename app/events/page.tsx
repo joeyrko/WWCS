@@ -8,6 +8,7 @@ import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
 import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { Reveal } from "@/components/motion/reveal";
 import { getAllVideos, searchVideos, type VideoFilters } from "@/lib/data/videos";
+import { FREE_ACCESS_PROMO_SLUG } from "@/lib/data/settings";
 import { sponsors } from "@/data/sponsors";
 import type { Video } from "@/types";
 
@@ -31,8 +32,9 @@ const ROW_ITEM_CLASS = "w-60 sm:w-72 lg:w-80";
 const LIVE_ITEM_CLASS = "w-80 sm:w-[26rem] lg:w-[34rem]";
 // The single card shown in the Live row — identified by slug rather than
 // bucketed by decade, since its date is a real (near-future) one, unlike the
-// rest of this mock data's historical dates.
-const LIVE_VIDEO_SLUG = "terremoto-founding-territory-match-1973";
+// rest of this mock data's historical dates. Same video the free-access
+// promo unlocks (see lib/data/settings.ts).
+const LIVE_VIDEO_SLUG = FREE_ACCESS_PROMO_SLUG;
 
 function decadeOf(publishedAt: string): number {
   return Math.floor(new Date(publishedAt).getFullYear() / 10) * 10;
