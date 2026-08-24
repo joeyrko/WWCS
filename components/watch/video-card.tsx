@@ -9,6 +9,7 @@ const SHOW_TYPE_LABEL: Record<Video["showType"], string> = {
   "full-match": "Full Match",
   highlight: "Highlight",
   documentary: "Documentary",
+  "live-event": "Live Event",
 };
 
 export function VideoCard({ video, className }: { video: Video; className?: string }) {

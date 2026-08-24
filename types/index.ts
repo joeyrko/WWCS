@@ -16,7 +16,7 @@ export interface Wrestler {
 
 export type AccessLevel = "free" | "subscribers" | "purchase";
 
-export type ShowType = "ppv" | "weekly-show" | "full-match" | "highlight" | "documentary";
+export type ShowType = "ppv" | "weekly-show" | "full-match" | "highlight" | "documentary" | "live-event";
 
 export interface Video {
   id: string;

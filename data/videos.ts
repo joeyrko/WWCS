@@ -200,7 +200,7 @@ export const videos: Video[] = [
     videoUrl: "https://www.youtube.com/watch?v=dLLUtKjok6s",
     durationSeconds: 900,
     publishedAt: "2026-09-26T20:00:00-04:00",
-    showType: "full-match",
+    showType: "live-event",
     access: "subscribers",
     wrestlers: [],
   },
