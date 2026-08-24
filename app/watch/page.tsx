@@ -12,7 +12,7 @@ import { sponsors } from "@/data/sponsors";
 import type { Video } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Watch Library",
+  title: "Historic Library",
   description: "Browse the full WWC on-demand library — PPV replays, weekly shows, full matches, and highlights.",
 };
 
@@ -53,9 +53,12 @@ export default async function WatchPage({
             On-Demand
           </span>
           <h1 className="font-display text-4xl uppercase tracking-wide text-white sm:text-5xl">
-            Watch Library
+            Historic Library
           </h1>
-          <p className="mt-3 max-w-2xl text-wwc-grey-400">Full shows— anytime.</p>
+          <p className="mt-3 max-w-2xl text-wwc-grey-400">
+            Grab your tickets, get official gear, and catch the latest news at
+            WORLDWRESTLINGCOUNCIL.COM.
+          </p>
         </StaggerIn>
       </section>
 
