@@ -22,14 +22,17 @@ function firstValue(value: string | string[] | undefined): string {
 }
 
 const DECADE_LABELS: Record<number, string> = {
-  1970: "Live",
   1990: "Past Events",
   2000: "Documentaries",
 };
-const DECADES = [1970, 1990, 2000];
+const DECADES = [1990, 2000];
 const UPCOMING_DECADE = 1980;
 const ROW_ITEM_CLASS = "w-60 sm:w-72 lg:w-80";
 const LIVE_ITEM_CLASS = "w-80 sm:w-[26rem] lg:w-[34rem]";
+// The single card shown in the Live row — identified by slug rather than
+// bucketed by decade, since its date is a real (near-future) one, unlike the
+// rest of this mock data's historical dates.
+const LIVE_VIDEO_SLUG = "terremoto-founding-territory-match-1973";
 
 function decadeOf(publishedAt: string): number {
   return Math.floor(new Date(publishedAt).getFullYear() / 10) * 10;
@@ -84,8 +87,11 @@ export default async function HomePage({
 }
 
 function BrowseRows({ videos }: { videos: Video[] }) {
+  const liveVideo = videos.find((video) => video.slug === LIVE_VIDEO_SLUG);
+
   const byDecade = new Map<number, Video[]>();
   for (const video of videos) {
+    if (video.slug === LIVE_VIDEO_SLUG) continue;
     const decade = decadeOf(video.publishedAt);
     const list = byDecade.get(decade) ?? [];
     list.push(video);
@@ -94,23 +100,21 @@ function BrowseRows({ videos }: { videos: Video[] }) {
 
   return (
     <div className="flex flex-col gap-10 py-10 sm:py-14">
+      {liveVideo && (
+        <Reveal>
+          <ContentRow title="Live" itemClassName={LIVE_ITEM_CLASS}>
+            <VideoCard video={liveVideo} aspect="video" />
+          </ContentRow>
+        </Reveal>
+      )}
       {DECADES.map((decade) => {
-        const decadeVideos = byDecade.get(decade) ?? [];
-        // "Live" drops its last two cards, keeping just the first.
-        const rowVideos = decade === 1970 ? decadeVideos.slice(0, -2) : decadeVideos;
+        const rowVideos = byDecade.get(decade) ?? [];
         if (rowVideos.length === 0) return null;
         return (
           <Reveal key={decade}>
-            <ContentRow
-              title={DECADE_LABELS[decade]}
-              itemClassName={decade === 1970 ? LIVE_ITEM_CLASS : ROW_ITEM_CLASS}
-            >
+            <ContentRow title={DECADE_LABELS[decade]} itemClassName={ROW_ITEM_CLASS}>
               {rowVideos.map((video) => (
-                <VideoCard
-                  key={video.id}
-                  video={video}
-                  aspect={decade === 1970 ? "video" : "square"}
-                />
+                <VideoCard key={video.id} video={video} />
               ))}
             </ContentRow>
           </Reveal>
