@@ -66,7 +66,7 @@ export default async function HomePage({
           </h1>
           <p className="mt-3 max-w-2xl text-wwc-grey-400">
             Grab your tickets, cop official gear, and catch the latest news at
-            WORLDWRESTLINGCOUNCIL.COM.
+            WORLDWRESTLINGCOUNCIL.COM
           </p>
         </StaggerIn>
       </section>
