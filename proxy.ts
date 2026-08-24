@@ -23,9 +23,13 @@ const PUBLIC_PATHS = new Set([
 const PLAN_EXEMPT_PATHS = new Set([...PUBLIC_PATHS, "/pricing"]);
 
 // The free-access promo (see lib/data/settings.ts, toggled from /admin)
-// only ever unlocks this one video's detail pages — everywhere else on the
-// site stays behind the normal plan check below.
+// only ever unlocks this one video — everywhere else on the site stays
+// behind the normal plan check below. /events (Home) is included too,
+// purely so a no-plan visitor has somewhere to actually see and click the
+// Live card in the first place — every other link on that page still gates
+// normally on click, since only these exact paths bypass the check.
 const FREE_ACCESS_PROMO_PATHS = new Set([
+  "/events",
   `/events/${FREE_ACCESS_PROMO_SLUG}`,
   `/watch/${FREE_ACCESS_PROMO_SLUG}`,
 ]);
