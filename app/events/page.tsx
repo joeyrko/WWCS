@@ -23,11 +23,10 @@ function firstValue(value: string | string[] | undefined): string {
 
 const DECADE_LABELS: Record<number, string> = {
   1970: "Live",
-  1980: "Upcoming",
   1990: "Past Events",
   2000: "Documentaries",
 };
-const DECADES = [1970, 1980, 1990, 2000];
+const DECADES = [1970, 1990, 2000];
 const UPCOMING_DECADE = 1980;
 const ROW_ITEM_CLASS = "w-60 sm:w-72 lg:w-80";
 
@@ -95,7 +94,9 @@ function BrowseRows({ videos }: { videos: Video[] }) {
   return (
     <div className="flex flex-col gap-10 py-10 sm:py-14">
       {DECADES.map((decade) => {
-        const rowVideos = byDecade.get(decade) ?? [];
+        const decadeVideos = byDecade.get(decade) ?? [];
+        // "Live" only ever shows its first two cards — trim the rest.
+        const rowVideos = decade === 1970 ? decadeVideos.slice(0, -2) : decadeVideos;
         if (rowVideos.length === 0) return null;
         return (
           <Reveal key={decade}>
