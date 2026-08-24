@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { getSession } from "@/lib/get-session";
 import { getAllUsers, getAllOrders } from "@/lib/data/users";
-import { getAllWrestlers } from "@/lib/data/wrestlers";
 import { Badge } from "@/components/ui/badge";
 import { AdminPinGate } from "@/components/admin/admin-pin-gate";
 import { FreeAccessToggle } from "@/components/admin/free-access-toggle";
@@ -40,10 +39,9 @@ export default async function AdminPage() {
   const pinVerified = cookieStore.get(ADMIN_PIN_COOKIE)?.value === "verified";
   if (!pinVerified) return <AdminPinGate />;
 
-  const [users, orders, wrestlers, freeAccessUntil, freeAccessActive] = await Promise.all([
+  const [users, orders, freeAccessUntil, freeAccessActive] = await Promise.all([
     getAllUsers(),
     getAllOrders(),
-    getAllWrestlers(),
     getFreeAccessUntil(),
     isFreeAccessActive(),
   ]);
@@ -71,11 +69,10 @@ export default async function AdminPage() {
         </p>
       </div>
 
-      <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <StatCard label="Users" value={users.length} />
         <StatCard label="Orders" value={orders.length} />
         <StatCard label="Revenue" value={formatCurrency(revenueInCents)} />
-        <StatCard label="Roster" value={wrestlers.length} />
       </div>
 
       <div className="mb-10">
