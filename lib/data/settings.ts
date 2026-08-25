@@ -37,3 +37,28 @@ export async function setFreeAccessUntil(until: Date | null): Promise<void> {
     .from("app_settings")
     .upsert({ key: FREE_ACCESS_UNTIL_KEY, value: until.toISOString(), updated_at: new Date().toISOString() });
 }
+
+const MAINTENANCE_MODE_KEY = "maintenance_mode";
+
+// Site-wide lock — blocks every visitor except an already-signed-in admin,
+// used while content is still being uploaded / the app isn't ready for real
+// customers yet. Unlike the free-access promo, this has no auto-expiry: it
+// stays on until manually turned off from /admin.
+export async function isMaintenanceModeActive(): Promise<boolean> {
+  const { data } = await supabase
+    .from("app_settings")
+    .select("value")
+    .eq("key", MAINTENANCE_MODE_KEY)
+    .maybeSingle();
+  return data?.value === "true";
+}
+
+export async function setMaintenanceMode(enabled: boolean): Promise<void> {
+  if (!enabled) {
+    await supabase.from("app_settings").delete().eq("key", MAINTENANCE_MODE_KEY);
+    return;
+  }
+  await supabase
+    .from("app_settings")
+    .upsert({ key: MAINTENANCE_MODE_KEY, value: "true", updated_at: new Date().toISOString() });
+}

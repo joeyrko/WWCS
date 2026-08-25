@@ -6,9 +6,10 @@ import { getAllUsers, getAllOrders } from "@/lib/data/users";
 import { Badge } from "@/components/ui/badge";
 import { AdminPinGate } from "@/components/admin/admin-pin-gate";
 import { FreeAccessToggle } from "@/components/admin/free-access-toggle";
+import { MaintenanceModeToggle } from "@/components/admin/maintenance-mode-toggle";
 import { UserManager, type AdminUserRow } from "@/components/admin/user-manager";
 import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
-import { getFreeAccessUntil, isFreeAccessActive } from "@/lib/data/settings";
+import { getFreeAccessUntil, isFreeAccessActive, isMaintenanceModeActive } from "@/lib/data/settings";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Order } from "@/types";
 
@@ -40,11 +41,12 @@ export default async function AdminPage() {
   const pinVerified = cookieStore.get(ADMIN_PIN_COOKIE)?.value === "verified";
   if (!pinVerified) return <AdminPinGate />;
 
-  const [users, orders, freeAccessUntil, freeAccessActive] = await Promise.all([
+  const [users, orders, freeAccessUntil, freeAccessActive, maintenanceModeActive] = await Promise.all([
     getAllUsers(),
     getAllOrders(),
     getFreeAccessUntil(),
     isFreeAccessActive(),
+    isMaintenanceModeActive(),
   ]);
 
   const revenueInCents = orders
@@ -87,6 +89,10 @@ export default async function AdminPage() {
         <StatCard label="Users" value={users.length} />
         <StatCard label="Orders" value={orders.length} />
         <StatCard label="Revenue" value={formatCurrency(revenueInCents)} />
+      </div>
+
+      <div className="mb-10">
+        <MaintenanceModeToggle active={maintenanceModeActive} />
       </div>
 
       <div className="mb-10">

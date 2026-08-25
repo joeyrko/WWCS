@@ -3,6 +3,7 @@ import { getSession } from "@/lib/get-session";
 import { stripe, getBaseUrl } from "@/lib/stripe";
 import { getPlanById } from "@/lib/data/plans";
 import { getStripeCustomerId } from "@/lib/data/users";
+import { isMaintenanceModeActive } from "@/lib/data/settings";
 import type { PlanId } from "@/types";
 
 interface SubscriptionCheckoutBody {
@@ -14,6 +15,17 @@ export async function POST(request: Request) {
   const session = await getSession();
   if (!session?.user) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+  }
+
+  // /api routes aren't covered by proxy.ts's maintenance-mode redirect (its
+  // matcher excludes them entirely) — checked directly here so checkout
+  // can't be reached some other way while the site's locked down, since
+  // that's the exact thing maintenance mode exists to prevent.
+  if (!session.user.isAdmin && (await isMaintenanceModeActive())) {
+    return NextResponse.json(
+      { error: "WWC+ isn't open yet — checkout is temporarily disabled." },
+      { status: 503 }
+    );
   }
 
   const body = (await request.json().catch(() => null)) as SubscriptionCheckoutBody | null;

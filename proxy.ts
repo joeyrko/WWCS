@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { FREE_ACCESS_PROMO_SLUG, isFreeAccessActive } from "@/lib/data/settings";
+import { FREE_ACCESS_PROMO_SLUG, isFreeAccessActive, isMaintenanceModeActive } from "@/lib/data/settings";
 
 // Routes reachable without an account. Everything else redirects signed-out
 // visitors to sign in first — they pick a plan at /pricing once they have an
@@ -16,11 +16,30 @@ const PUBLIC_PATHS = new Set([
   "/sitemap.xml",
   "/privacy",
   "/terms",
+  "/maintenance",
 ]);
 
 // Reachable even by a signed-in user with no active plan — must include
 // /pricing itself (otherwise there'd be no way to ever reach it).
 const PLAN_EXEMPT_PATHS = new Set([...PUBLIC_PATHS, "/pricing"]);
+
+// Reachable by anyone even while maintenance mode is on (see
+// lib/data/settings.ts, toggled from /admin) — /sign-in has to stay open so
+// an admin can actually get in and turn it back off; the rest are low-risk
+// legal/technical pages, harmless to leave public. Everything else,
+// including /pricing and checkout, redirects to /maintenance for anyone who
+// isn't already signed in as an admin.
+const MAINTENANCE_ALLOWED_PATHS = new Set([
+  "/maintenance",
+  "/sign-in",
+  "/forgot-password",
+  "/reset-password",
+  "/privacy",
+  "/terms",
+  "/manifest.webmanifest",
+  "/robots.txt",
+  "/sitemap.xml",
+]);
 
 // The free-access promo (see lib/data/settings.ts, toggled from /admin)
 // only ever unlocks this one video — everywhere else on the site stays
@@ -36,6 +55,14 @@ const FREE_ACCESS_PROMO_PATHS = new Set([
 
 export default auth(async (req) => {
   const { pathname } = req.nextUrl;
+
+  if (
+    !MAINTENANCE_ALLOWED_PATHS.has(pathname) &&
+    req.auth?.user?.isAdmin !== true &&
+    (await isMaintenanceModeActive())
+  ) {
+    return NextResponse.redirect(new URL("/maintenance", req.nextUrl.origin));
+  }
 
   if (!req.auth) {
     if (PUBLIC_PATHS.has(pathname)) return NextResponse.next();
