@@ -67,6 +67,20 @@ export default async function AccountPage({
             </div>
           </div>
         </div>
+
+        <div className="mt-6 rounded-md border border-wwc-grey-800 bg-wwc-grey-950 p-6">
+          <p className="text-xs font-semibold uppercase tracking-wide text-wwc-grey-500">
+            Customer Support
+          </p>
+          <p className="mt-1 text-white">
+            <a
+              href="mailto:support@worldwrestlingcouncil.com"
+              className="hover:text-wwc-red hover:underline"
+            >
+              support@worldwrestlingcouncil.com
+            </a>
+          </p>
+        </div>
       </section>
     </>
   );
