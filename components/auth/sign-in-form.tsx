@@ -80,13 +80,6 @@ export function SignInForm({ callbackUrl }: { callbackUrl: string }) {
           Sign up
         </Link>
       </p>
-
-      <div className="mt-4 rounded-sm border border-wwc-grey-800 bg-wwc-black p-3 text-xs text-wwc-grey-500">
-        <p className="mb-1 font-semibold text-wwc-grey-300">Demo accounts</p>
-        <p>fan@wwc.tv / wrestlemania — WWC+ Annual</p>
-        <p>champion@wwc.tv / championship — WWC Legacy Pass</p>
-        <p>rookie@wwc.tv / firstmatch — No active plan</p>
-      </div>
     </form>
   );
 }
