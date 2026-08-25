@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "We'll Be Right Back",
+  title: "Coming Soon!",
   robots: { index: false, follow: false },
 };
 
@@ -12,7 +12,7 @@ export default function MaintenancePage() {
         WWC+
       </span>
       <h1 className="font-display text-4xl uppercase tracking-wide text-white sm:text-5xl">
-        We&apos;ll Be Right Back
+        Coming Soon!
       </h1>
       <p className="mt-4 max-w-md text-wwc-grey-400">
         WWC+ isn&apos;t open yet — we&apos;re still uploading content and getting everything
