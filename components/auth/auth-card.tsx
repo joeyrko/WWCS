@@ -13,7 +13,7 @@ export function AuthCard({
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-16">
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(224,20,26,0.16),transparent)]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(0,56,240,0.16),transparent)]"
       />
       <div className="w-full max-w-md rounded-md border border-wwc-grey-800 bg-wwc-grey-950 p-8 shadow-2xl shadow-black/40">
         <div className="mb-6 flex justify-center">

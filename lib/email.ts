@@ -25,7 +25,7 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
         <h1 style="font-size: 20px;">Reset your password</h1>
         <p>We received a request to reset the password on your WWC+ account. This link expires in 30 minutes.</p>
         <p>
-          <a href="${resetUrl}" style="display: inline-block; background: #e0141a; color: #fff; padding: 12px 20px; border-radius: 4px; text-decoration: none; font-weight: bold;">
+          <a href="${resetUrl}" style="display: inline-block; background: #0038f0; color: #fff; padding: 12px 20px; border-radius: 4px; text-decoration: none; font-weight: bold;">
             Reset Password
           </a>
         </p>

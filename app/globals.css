@@ -4,9 +4,9 @@
   /* Brand palette */
   --color-wwc-black: #070707;
   --color-wwc-black-soft: #121212;
-  --color-wwc-red: #e0141a;
-  --color-wwc-red-dark: #9c0d11;
-  --color-wwc-red-glow: #ff363d;
+  --color-wwc-red: #0038f0;
+  --color-wwc-red-dark: #0027a8;
+  --color-wwc-red-glow: #3d6bff;
   --color-wwc-white: #f7f7f7;
 
   --color-wwc-grey-950: #0c0c0c;
@@ -31,11 +31,11 @@
   0%,
   100% {
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(224, 20, 26, 0.65);
+    box-shadow: 0 0 0 0 rgba(0, 56, 240, 0.65);
   }
   50% {
     opacity: 0.85;
-    box-shadow: 0 0 0 6px rgba(224, 20, 26, 0);
+    box-shadow: 0 0 0 6px rgba(0, 56, 240, 0);
   }
 }
 
@@ -75,12 +75,12 @@ body {
 
 /* Red glow used on interactive/hover elements */
 .glow-red {
-  box-shadow: 0 0 0 rgba(224, 20, 26, 0);
+  box-shadow: 0 0 0 rgba(0, 56, 240, 0);
   transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .glow-red:hover {
-  box-shadow: 0 0 24px 2px rgba(224, 20, 26, 0.45);
+  box-shadow: 0 0 24px 2px rgba(0, 56, 240, 0.45);
 }
 
 /* Focus ring in brand red for accessibility */

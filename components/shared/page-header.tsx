@@ -23,7 +23,7 @@ export function PageHeader({
     >
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,rgba(224,20,26,0.18),transparent)]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,rgba(0,56,240,0.18),transparent)]"
       />
       <StaggerIn
         className={cn(

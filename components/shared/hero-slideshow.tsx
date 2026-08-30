@@ -43,7 +43,7 @@ export function HeroSlideshow({
         </div>
       ))}
       <div className="absolute inset-0 bg-gradient-to-t from-wwc-black via-wwc-black/85 to-wwc-black/50" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,rgba(224,20,26,0.22),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,rgba(0,56,240,0.22),transparent)]" />
     </div>
   );
 }

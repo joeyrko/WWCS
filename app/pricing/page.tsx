@@ -28,7 +28,7 @@ export default async function PricingPage() {
     <div className="relative overflow-hidden">
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(224,20,26,0.24),transparent)]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(0,56,240,0.24),transparent)]"
       />
       <div className="clip-diagonal absolute inset-x-0 top-0 -z-20 h-[60vh] bg-gradient-to-br from-wwc-red-dark/25 via-wwc-black to-wwc-black" />
 
@@ -42,7 +42,7 @@ export default async function PricingPage() {
                 className={cn(
                   "relative flex flex-col rounded-md border p-7",
                   plan.highlighted
-                    ? "border-wwc-red bg-wwc-grey-950 pb-24 shadow-[0_0_40px_rgba(224,20,26,0.15)]"
+                    ? "border-wwc-red bg-wwc-grey-950 pb-24 shadow-[0_0_40px_rgba(0,56,240,0.15)]"
                     : "border-wwc-grey-800 bg-wwc-grey-950/60"
                 )}
               >
