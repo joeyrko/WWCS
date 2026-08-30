@@ -8,8 +8,8 @@ export function Logo({ className }: { className?: string }) {
       <Image
         src="/wwc-logo.png"
         alt="WWC+"
-        width={36}
-        height={40}
+        width={680}
+        height={738}
         priority
         className="h-9 w-auto shrink-0 transition-transform duration-200 group-hover:scale-105"
       />
