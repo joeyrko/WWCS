@@ -15,7 +15,7 @@ export default function DesktopBlockedPage() {
         Please Use Our App
       </h1>
       <p className="mt-4 max-w-md text-wwc-grey-400">
-        The desktop site is temporarily unavailable. WWC+ is currently only accessible from
+        The desktop site is not available. WWC+ is currently only accessible from
         your phone, tablet, or smart TV app.
       </p>
       <p className="mt-6 text-sm text-wwc-grey-500">
