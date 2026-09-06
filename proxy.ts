@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { FREE_ACCESS_PROMO_SLUG, isFreeAccessActive, isMaintenanceModeActive } from "@/lib/data/settings";
+import {
+  FREE_ACCESS_PROMO_SLUG,
+  isFreeAccessActive,
+  isMaintenanceModeActive,
+  isDesktopBlockActive,
+} from "@/lib/data/settings";
+import { isDesktopUserAgent } from "@/lib/is-desktop-user-agent";
 
 // Routes reachable without an account. Everything else redirects signed-out
 // visitors to sign in first — they pick a plan at /pricing once they have an
@@ -17,6 +23,7 @@ const PUBLIC_PATHS = new Set([
   "/privacy",
   "/terms",
   "/maintenance",
+  "/desktop-blocked",
 ]);
 
 // Reachable even by a signed-in user with no active plan — must include
@@ -31,6 +38,23 @@ const PLAN_EXEMPT_PATHS = new Set([...PUBLIC_PATHS, "/pricing"]);
 // isn't already signed in as an admin.
 const MAINTENANCE_ALLOWED_PATHS = new Set([
   "/maintenance",
+  "/sign-in",
+  "/forgot-password",
+  "/reset-password",
+  "/privacy",
+  "/terms",
+  "/manifest.webmanifest",
+  "/robots.txt",
+  "/sitemap.xml",
+]);
+
+// Reachable by a desktop browser even while the desktop block is on (see
+// lib/data/settings.ts, toggled from /admin) — /sign-in has to stay open so
+// an admin can sign in from a desktop and turn it back off; the rest are
+// low-risk legal/technical pages. Everything else redirects desktop browsers
+// to /desktop-blocked; phone/tablet browsers and the TV app are unaffected.
+const DESKTOP_BLOCK_ALLOWED_PATHS = new Set([
+  "/desktop-blocked",
   "/sign-in",
   "/forgot-password",
   "/reset-password",
@@ -62,6 +86,15 @@ export default auth(async (req) => {
     (await isMaintenanceModeActive())
   ) {
     return NextResponse.redirect(new URL("/maintenance", req.nextUrl.origin));
+  }
+
+  if (
+    !DESKTOP_BLOCK_ALLOWED_PATHS.has(pathname) &&
+    req.auth?.user?.isAdmin !== true &&
+    isDesktopUserAgent(req.headers.get("user-agent")) &&
+    (await isDesktopBlockActive())
+  ) {
+    return NextResponse.redirect(new URL("/desktop-blocked", req.nextUrl.origin));
   }
 
   if (!req.auth) {

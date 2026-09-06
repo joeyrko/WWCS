@@ -7,9 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { AdminPinGate } from "@/components/admin/admin-pin-gate";
 import { FreeAccessToggle } from "@/components/admin/free-access-toggle";
 import { MaintenanceModeToggle } from "@/components/admin/maintenance-mode-toggle";
+import { DesktopBlockToggle } from "@/components/admin/desktop-block-toggle";
 import { UserManager, type AdminUserRow } from "@/components/admin/user-manager";
 import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
-import { getFreeAccessUntil, isFreeAccessActive, isMaintenanceModeActive } from "@/lib/data/settings";
+import {
+  getFreeAccessUntil,
+  isFreeAccessActive,
+  isMaintenanceModeActive,
+  isDesktopBlockActive,
+} from "@/lib/data/settings";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Order } from "@/types";
 
@@ -41,13 +47,15 @@ export default async function AdminPage() {
   const pinVerified = cookieStore.get(ADMIN_PIN_COOKIE)?.value === "verified";
   if (!pinVerified) return <AdminPinGate />;
 
-  const [users, orders, freeAccessUntil, freeAccessActive, maintenanceModeActive] = await Promise.all([
-    getAllUsers(),
-    getAllOrders(),
-    getFreeAccessUntil(),
-    isFreeAccessActive(),
-    isMaintenanceModeActive(),
-  ]);
+  const [users, orders, freeAccessUntil, freeAccessActive, maintenanceModeActive, desktopBlockActive] =
+    await Promise.all([
+      getAllUsers(),
+      getAllOrders(),
+      getFreeAccessUntil(),
+      isFreeAccessActive(),
+      isMaintenanceModeActive(),
+      isDesktopBlockActive(),
+    ]);
 
   const revenueInCents = orders
     .filter((o) => o.status === "paid")
@@ -93,6 +101,10 @@ export default async function AdminPage() {
 
       <div className="mb-10">
         <MaintenanceModeToggle active={maintenanceModeActive} />
+      </div>
+
+      <div className="mb-10">
+        <DesktopBlockToggle active={desktopBlockActive} />
       </div>
 
       <div className="mb-10">

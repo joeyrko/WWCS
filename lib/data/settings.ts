@@ -62,3 +62,29 @@ export async function setMaintenanceMode(enabled: boolean): Promise<void> {
     .from("app_settings")
     .upsert({ key: MAINTENANCE_MODE_KEY, value: "true", updated_at: new Date().toISOString() });
 }
+
+const DESKTOP_BLOCK_KEY = "desktop_block";
+
+// Blocks desktop-class browsers site-wide (see proxy.ts for the User-Agent
+// check that enforces this) while leaving phone/tablet browsers and the TV
+// app untouched — used to push traffic toward the app experiences instead of
+// the desktop web page. Like maintenance mode, an already-signed-in admin is
+// always exempt so there's no way to lock yourself out from a desktop.
+export async function isDesktopBlockActive(): Promise<boolean> {
+  const { data } = await supabase
+    .from("app_settings")
+    .select("value")
+    .eq("key", DESKTOP_BLOCK_KEY)
+    .maybeSingle();
+  return data?.value === "true";
+}
+
+export async function setDesktopBlock(enabled: boolean): Promise<void> {
+  if (!enabled) {
+    await supabase.from("app_settings").delete().eq("key", DESKTOP_BLOCK_KEY);
+    return;
+  }
+  await supabase
+    .from("app_settings")
+    .upsert({ key: DESKTOP_BLOCK_KEY, value: "true", updated_at: new Date().toISOString() });
+}
