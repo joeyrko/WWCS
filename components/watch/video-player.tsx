@@ -53,12 +53,19 @@ export function VideoPlayer({ src, title }: { src: string; title: string }) {
   }, [embed.kind, showTrailer]);
 
   return (
-    <div ref={containerRef} className="relative overflow-hidden rounded-md border border-wwc-grey-800 bg-black">
+    <div
+      ref={containerRef}
+      onContextMenu={(e) => e.preventDefault()}
+      className="relative select-none overflow-hidden rounded-md border border-wwc-grey-800 bg-black"
+    >
       {showTrailer || embed.kind === "file" ? (
         <video
           ref={videoRef}
           autoPlay={showTrailer}
           controls
+          controlsList="nodownload noremoteplayback"
+          disablePictureInPicture
+          draggable={false}
           className="aspect-video w-full"
           onPlay={(e) => enterFullscreen(e.currentTarget)}
           onEnded={showTrailer ? handleTrailerEnded : undefined}
