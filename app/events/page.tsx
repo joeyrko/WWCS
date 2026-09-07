@@ -99,7 +99,11 @@ function BrowseRows({ videos, liveVideo }: { videos: Video[]; liveVideo: Video |
     <div className="flex flex-col gap-10 py-10 sm:py-14">
       {liveVideo && (
         <Reveal>
-          <ContentRow title="Live" itemClassName={LIVE_ITEM_CLASS}>
+          {/* Genuinely red, not the "wwc-red" token — that's the brand's
+              blue accent now (see app/globals.css), so it wouldn't read as
+              red here. This is the site's only intentionally-red element,
+              which is the point: it should stand out from the brand color. */}
+          <ContentRow title="Live" itemClassName={LIVE_ITEM_CLASS} titleClassName="text-[#e0141a]">
             <VideoCard video={liveVideo} aspect="video" />
           </ContentRow>
         </Reveal>

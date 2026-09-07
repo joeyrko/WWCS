@@ -12,11 +12,13 @@ export function ContentRow({
   children,
   itemClassName = "w-44 sm:w-52",
   className,
+  titleClassName = "text-white",
 }: {
   title: string;
   children: ReactNode;
   itemClassName?: string;
   className?: string;
+  titleClassName?: string;
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -47,7 +49,12 @@ export function ContentRow({
 
   return (
     <div className={cn("group/row relative", className)}>
-      <h2 className="mb-3 px-4 font-display text-xl uppercase tracking-wide text-white sm:px-6 sm:text-2xl lg:px-8">
+      <h2
+        className={cn(
+          "mb-3 px-4 font-display text-xl uppercase tracking-wide sm:px-6 sm:text-2xl lg:px-8",
+          titleClassName
+        )}
+      >
         {title}
       </h2>
 
