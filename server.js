@@ -19,6 +19,26 @@ const httpServer = createServer();
 const app = next({ dev: false, hostname, port, httpServer });
 const handle = app.getRequestHandler();
 
+// Next's own internal lifecycle hook for a custom `httpServer` registers a
+// close listener on this exact server and, on some restarts, ends up calling
+// close() a second time after it's already fully closed. Node delivers that
+// safely as an ERR_SERVER_NOT_RUNNING error to a callback (verified locally),
+// but whatever Next does with it internally lets the error escape uncaught,
+// crashing the whole process — this is the recurring "Error: Server is not
+// running" crash-loop seen in production. There's no hook into Next's
+// bundled/minified internals to fix the double-close itself, so this catches
+// only that exact, harmless error by code and lets the process keep running;
+// anything else still crashes the process as it always did, so a real bug
+// doesn't get silently swallowed.
+process.on("uncaughtException", (err) => {
+  if (err && err.code === "ERR_SERVER_NOT_RUNNING") {
+    console.error("> Ignored benign duplicate server-close error:", err.message);
+    return;
+  }
+  console.error("Uncaught exception:", err);
+  process.exit(1);
+});
+
 httpServer.on("request", (req, res) => {
   handle(req, res);
 });
