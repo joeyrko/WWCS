@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import { Calendar } from "lucide-react";
 import { getSession } from "@/lib/get-session";
 import { videos } from "@/data/videos";
@@ -7,8 +8,10 @@ import { getRelatedVideos, getVideoBySlug } from "@/lib/data/videos";
 import { getWrestlersBySlugs } from "@/lib/data/wrestlers";
 import { userHasAccessToVideo } from "@/lib/data/users";
 import { isFreeAccessActive } from "@/lib/data/settings";
+import { isLiveEventBlackedOut } from "@/lib/geo-fence";
 import { VideoPlayer } from "@/components/watch/video-player";
 import { AccessGate } from "@/components/events/access-gate";
+import { GeoBlockedGate } from "@/components/shared/geo-blocked-gate";
 import { RelatedVideosRail } from "@/components/events/related-videos-rail";
 import { formatDate } from "@/lib/utils";
 
@@ -41,19 +44,23 @@ export default async function HomeVideoDetailPage({
   const video = await getVideoBySlug(slug);
   if (!video) notFound();
 
-  const [session, related, wrestlers, freeAccessActive] = await Promise.all([
+  const [session, related, wrestlers, freeAccessActive, headersList] = await Promise.all([
     getSession(),
     getRelatedVideos(video),
     getWrestlersBySlugs(video.wrestlers),
     isFreeAccessActive(),
+    headers(),
   ]);
 
   const hasAccess = userHasAccessToVideo(session?.user, video, freeAccessActive);
+  const geoBlocked = hasAccess && isLiveEventBlackedOut(video, headersList);
 
   return (
     <div className="pt-24 sm:pt-28">
       <div className="mx-auto max-w-4xl px-4 pb-10 sm:px-6 lg:px-8">
-        {hasAccess ? (
+        {geoBlocked ? (
+            <GeoBlockedGate />
+          ) : hasAccess ? (
             <VideoPlayer src={video.videoUrl} title={video.title} />
           ) : (
             <AccessGate video={video} signedIn={!!session?.user} />
