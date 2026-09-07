@@ -10,6 +10,7 @@ import { MaintenanceModeToggle } from "@/components/admin/maintenance-mode-toggl
 import { DesktopBlockToggle } from "@/components/admin/desktop-block-toggle";
 import { GeoFenceToggle } from "@/components/admin/geo-fence-toggle";
 import { UserManager, type AdminUserRow } from "@/components/admin/user-manager";
+import { LiveEventsManager } from "@/components/admin/live-events-manager";
 import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
 import {
   getFreeAccessUntil,
@@ -18,6 +19,7 @@ import {
   isDesktopBlockActive,
   isGeoFenceDisabled,
 } from "@/lib/data/settings";
+import { getAllLiveEvents } from "@/lib/data/live-events";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Order } from "@/types";
 
@@ -57,6 +59,7 @@ export default async function AdminPage() {
     maintenanceModeActive,
     desktopBlockActive,
     geoFenceDisabled,
+    liveEvents,
   ] = await Promise.all([
     getAllUsers(),
     getAllOrders(),
@@ -65,6 +68,7 @@ export default async function AdminPage() {
     isMaintenanceModeActive(),
     isDesktopBlockActive(),
     isGeoFenceDisabled(),
+    getAllLiveEvents(),
   ]);
 
   const revenueInCents = orders
@@ -130,6 +134,10 @@ export default async function AdminPage() {
 
       <section className="mb-10">
         <UserManager users={userRows} currentUserId={session.user.id} />
+      </section>
+
+      <section className="mb-10">
+        <LiveEventsManager events={liveEvents} />
       </section>
 
       <section className="mb-10">

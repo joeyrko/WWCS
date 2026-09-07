@@ -31,6 +31,7 @@ export interface Video {
   access: AccessLevel;
   wrestlers: string[]; // wrestler slugs
   relatedEventSlug?: string;
+  location?: string;
 }
 
 export interface Plan {

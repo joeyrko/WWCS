@@ -1,4 +1,5 @@
-import { videos } from "@/data/videos";
+import { videos as staticVideos } from "@/data/videos";
+import { getAllLiveEvents, getLiveEventBySlug, toVideo } from "@/lib/data/live-events";
 import type { ShowType, Video } from "@/types";
 
 export interface VideoFilters {
@@ -8,16 +9,24 @@ export interface VideoFilters {
   sort?: "newest" | "oldest";
 }
 
+// Live events created from /admin (a real table) are merged in alongside
+// the static catalog (data/videos.ts) everywhere videos are listed, looked
+// up, searched, or related — so the rest of the app never needs a separate
+// code path for one vs. the other.
 export async function getAllVideos(): Promise<Video[]> {
-  return videos;
+  const liveEvents = await getAllLiveEvents();
+  return [...staticVideos, ...liveEvents.map(toVideo)];
 }
 
 export async function getVideoBySlug(slug: string): Promise<Video | undefined> {
-  return videos.find((v) => v.slug === slug);
+  const staticMatch = staticVideos.find((v) => v.slug === slug);
+  if (staticMatch) return staticMatch;
+  const liveEvent = await getLiveEventBySlug(slug);
+  return liveEvent ? toVideo(liveEvent) : undefined;
 }
 
 export async function searchVideos(filters: VideoFilters = {}): Promise<Video[]> {
-  let results = [...videos];
+  let results = await getAllVideos();
 
   if (filters.showType && filters.showType !== "all") {
     results = results.filter((v) => v.showType === filters.showType);
@@ -41,7 +50,8 @@ export async function searchVideos(filters: VideoFilters = {}): Promise<Video[]>
 }
 
 export async function getRelatedVideos(video: Video, limit = 4): Promise<Video[]> {
-  return videos
+  const all = await getAllVideos();
+  return all
     .filter((v) => v.id !== video.id)
     .filter(
       (v) =>
@@ -53,7 +63,6 @@ export async function getRelatedVideos(video: Video, limit = 4): Promise<Video[]
 }
 
 export async function getTrendingVideos(limit = 8): Promise<Video[]> {
-  return [...videos]
-    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-    .slice(0, limit);
+  const all = await getAllVideos();
+  return all.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()).slice(0, limit);
 }

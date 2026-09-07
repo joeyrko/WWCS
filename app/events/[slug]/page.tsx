@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import { Calendar } from "lucide-react";
+import { Calendar, MapPin } from "lucide-react";
 import { getSession } from "@/lib/get-session";
 import { videos } from "@/data/videos";
 import { getRelatedVideos, getVideoBySlug } from "@/lib/data/videos";
@@ -67,9 +67,17 @@ export default async function HomeVideoDetailPage({
             <AccessGate video={video} signedIn={!!session?.user} />
           )}
 
-          <div className="mt-6 flex items-center gap-1.5 text-sm text-wwc-grey-500">
-            <Calendar className="h-4 w-4" />
-            {formatDate(video.publishedAt, { month: "long", day: "numeric", year: "numeric" })}
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-wwc-grey-500">
+            <div className="flex items-center gap-1.5">
+              <Calendar className="h-4 w-4" />
+              {formatDate(video.publishedAt, { month: "long", day: "numeric", year: "numeric" })}
+            </div>
+            {video.location && (
+              <div className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" />
+                {video.location}
+              </div>
+            )}
           </div>
 
           <h1 className="mt-3 font-display text-3xl uppercase leading-tight tracking-wide text-white sm:text-4xl">
