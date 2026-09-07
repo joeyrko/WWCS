@@ -8,10 +8,17 @@ import type { Video } from "@/types";
 // build-analysis path, not the real one). Deferring the load into this
 // function means it only runs at actual request time, and the module-level
 // cache means it only loads once per server process, not per request.
+// Node's ESM/CJS interop puts geoip-lite's actual exports (lookup, cmp,
+// etc.) under `.default` on a dynamic import() — the module's static
+// named-export analysis doesn't reliably pick them up at the top level, even
+// though @types/geoip-lite's declaration (correctly, for the shape once
+// unwrapped) describes them as plain named exports. Casting through
+// `.default` here is what makes the runtime shape match that declared type.
 let geoipModule: typeof import("geoip-lite") | undefined;
 async function getGeoip() {
   if (!geoipModule) {
-    geoipModule = await import("geoip-lite");
+    const mod = await import("geoip-lite");
+    geoipModule = (mod as unknown as { default: typeof import("geoip-lite") }).default;
   }
   return geoipModule;
 }
