@@ -66,3 +66,21 @@ export async function getTrendingVideos(limit = 8): Promise<Video[]> {
   const all = await getAllVideos();
   return all.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()).slice(0, limit);
 }
+
+// The video featured in the homepage's "Live" row — whichever live-event
+// video's date is closest to right now (soonest upcoming, or most recently
+// aired if none are upcoming), out of both the static catalog and anything
+// added from /admin. Not tied to a fixed slug, so a newly-added live event
+// takes over the spot automatically without a code change.
+export async function getCurrentLiveEvent(): Promise<Video | undefined> {
+  const all = await getAllVideos();
+  const liveEvents = all.filter((v) => v.showType === "live-event");
+  if (liveEvents.length === 0) return undefined;
+
+  const now = Date.now();
+  return liveEvents.reduce((closest, v) => {
+    const vDiff = Math.abs(new Date(v.publishedAt).getTime() - now);
+    const closestDiff = Math.abs(new Date(closest.publishedAt).getTime() - now);
+    return vDiff < closestDiff ? v : closest;
+  });
+}

@@ -7,8 +7,7 @@ import { ContentRow } from "@/components/shared/content-row";
 import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
 import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { Reveal } from "@/components/motion/reveal";
-import { getAllVideos, searchVideos, type VideoFilters } from "@/lib/data/videos";
-import { FREE_ACCESS_PROMO_SLUG } from "@/lib/data/settings";
+import { getAllVideos, getCurrentLiveEvent, searchVideos, type VideoFilters } from "@/lib/data/videos";
 import { sponsors } from "@/data/sponsors";
 import type { Video } from "@/types";
 
@@ -30,11 +29,6 @@ const DECADES = [1990, 2000];
 const UPCOMING_DECADE = 1980;
 const ROW_ITEM_CLASS = "w-60 sm:w-72 lg:w-80";
 const LIVE_ITEM_CLASS = "w-80 sm:w-[26rem] lg:w-[34rem]";
-// The single card shown in the Live row — identified by slug rather than
-// bucketed by decade, since its date is a real (near-future) one, unlike the
-// rest of this mock data's historical dates. Same video the free-access
-// promo unlocks (see lib/data/settings.ts).
-const LIVE_VIDEO_SLUG = FREE_ACCESS_PROMO_SLUG;
 
 function decadeOf(publishedAt: string): number {
   return Math.floor(new Date(publishedAt).getFullYear() / 10) * 10;
@@ -52,7 +46,7 @@ export default async function HomePage({
   const sort = firstValue(params.sort) || "newest";
   const hasActiveFilters = Boolean(q) || type !== "all" || wrestler !== "all";
 
-  const all = await getAllVideos();
+  const [all, liveVideo] = await Promise.all([getAllVideos(), getCurrentLiveEvent()]);
   const upcoming = all.filter((video) => decadeOf(video.publishedAt) === UPCOMING_DECADE);
 
   return (
@@ -76,7 +70,7 @@ export default async function HomePage({
       {hasActiveFilters ? (
         <FilteredResults filters={{ query: q || undefined, showType: type as VideoFilters["showType"], wrestlerSlug: wrestler === "all" ? undefined : wrestler, sort: sort === "oldest" ? "oldest" : "newest" }} />
       ) : (
-        <BrowseRows videos={all} />
+        <BrowseRows videos={all} liveVideo={liveVideo} />
       )}
 
       <Reveal>
@@ -91,12 +85,10 @@ export default async function HomePage({
   );
 }
 
-function BrowseRows({ videos }: { videos: Video[] }) {
-  const liveVideo = videos.find((video) => video.slug === LIVE_VIDEO_SLUG);
-
+function BrowseRows({ videos, liveVideo }: { videos: Video[]; liveVideo: Video | undefined }) {
   const byDecade = new Map<number, Video[]>();
   for (const video of videos) {
-    if (video.slug === LIVE_VIDEO_SLUG) continue;
+    if (video.id === liveVideo?.id) continue;
     const decade = decadeOf(video.publishedAt);
     const list = byDecade.get(decade) ?? [];
     list.push(video);
