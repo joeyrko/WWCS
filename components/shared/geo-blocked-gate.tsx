@@ -6,11 +6,12 @@ export function GeoBlockedGate() {
       <Ban className="h-10 w-10 text-wwc-red" />
       <div>
         <h2 className="font-display text-2xl uppercase tracking-wide text-white">
-          Not Available In Your Area
+          Not Available In Puerto Rico
         </h2>
         <p className="mt-2 max-w-sm text-sm text-wwc-grey-400">
-          This live event is blacked out for viewers in Puerto Rico due to local broadcast
-          restrictions. On-demand replay will be available here once the event has ended.
+          Due to local broadcast restrictions, this event cannot be streamed live in Puerto
+          Rico. The full replay will be available on-demand here every Wednesday following the
+          live show. We apologize for the inconvenience.
         </p>
       </div>
     </div>
