@@ -2,7 +2,13 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // geoip-lite locates its bundled MaxMind .dat files via a path relative to
+  // its own __dirname at actual lookup time — Turbopack's server bundling
+  // rewrites that to a virtual path with no real files behind it (ENOENT),
+  // both during the build's page-data-collection step and at request time.
+  // This opts it out of bundling entirely so Next uses a plain native
+  // require(), preserving its real on-disk __dirname.
+  serverExternalPackages: ["geoip-lite"],
 };
 
 export default withSentryConfig(nextConfig, {

@@ -53,7 +53,7 @@ export default async function HomeVideoDetailPage({
   ]);
 
   const hasAccess = userHasAccessToVideo(session?.user, video, freeAccessActive);
-  const geoBlocked = hasAccess ? await isLiveEventBlackedOut(video, headersList) : false;
+  const geoBlocked = hasAccess && isLiveEventBlackedOut(video, headersList);
 
   return (
     <div className="pt-24 sm:pt-28">

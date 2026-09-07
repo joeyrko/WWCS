@@ -1,27 +1,13 @@
+import geoip from "geoip-lite";
 import type { Video } from "@/types";
 
-// Loaded lazily rather than a static top-level `import` — geoip-lite eagerly
-// reads ~100MB of MaxMind data into memory the instant it's loaded, and
-// Next's build-time page-data-collection step evaluates a route's top-level
-// imports without ever calling the page itself, which broke `next build`
-// entirely (ENOENT trying to read the data files under a virtualized
-// build-analysis path, not the real one). Deferring the load into this
-// function means it only runs at actual request time, and the module-level
-// cache means it only loads once per server process, not per request.
-// Node's ESM/CJS interop puts geoip-lite's actual exports (lookup, cmp,
-// etc.) under `.default` on a dynamic import() — the module's static
-// named-export analysis doesn't reliably pick them up at the top level, even
-// though @types/geoip-lite's declaration (correctly, for the shape once
-// unwrapped) describes them as plain named exports. Casting through
-// `.default` here is what makes the runtime shape match that declared type.
-let geoipModule: typeof import("geoip-lite") | undefined;
-async function getGeoip() {
-  if (!geoipModule) {
-    const mod = await import("geoip-lite");
-    geoipModule = (mod as unknown as { default: typeof import("geoip-lite") }).default;
-  }
-  return geoipModule;
-}
+// geoip-lite is opted out of Turbopack's server bundling via
+// serverExternalPackages in next.config.ts — it locates its bundled MaxMind
+// .dat files relative to its own __dirname at lookup time, and bundling
+// rewrote that to a virtual path with no real files behind it (ENOENT), both
+// during the build's page-data-collection step and at request time.
+// Externalizing it means Next uses a plain native require(), so this can go
+// back to a normal top-level import instead of a lazy/deferred one.
 
 // MaxMind's GeoLite2 data (bundled via geoip-lite) assigns Puerto Rico its
 // own ISO 3166-1 country code, "PR" — distinct from "US" — so a plain
@@ -36,9 +22,8 @@ async function getGeoip() {
 // license_key=YOUR_KEY` run periodically with a free MaxMind account — see
 // https://www.maxmind.com/en/geolite2/signup. Until then, this is a
 // best-effort geofence, not a guarantee.
-export async function isPuertoRicoIp(ip: string | null): Promise<boolean> {
+export function isPuertoRicoIp(ip: string | null): boolean {
   if (!ip) return false;
-  const geoip = await getGeoip();
   const geo = geoip.lookup(ip);
   return geo?.country === "PR";
 }
@@ -58,7 +43,7 @@ export function getClientIp(headersList: Headers): string | null {
 // Broadcast-rights blackout: only live events are restricted, and only for
 // visitors resolving to Puerto Rico. Everything else (replays, PPV
 // full-shows, highlights, etc.) is unaffected regardless of location.
-export async function isLiveEventBlackedOut(video: Video, headersList: Headers): Promise<boolean> {
+export function isLiveEventBlackedOut(video: Video, headersList: Headers): boolean {
   if (video.showType !== "live-event") return false;
   return isPuertoRicoIp(getClientIp(headersList));
 }
