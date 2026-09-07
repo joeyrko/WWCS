@@ -192,19 +192,6 @@ export const videos: Video[] = [
   // Archival footage from WWC's history, organized by decade on the History
   // page (see app/watch/page.tsx) rather than by show type.
   {
-    id: "v15",
-    slug: "terremoto-founding-territory-match-1973",
-    title: "Septiembre Negro",
-    description: 'WWC Present Black September, in the Cancha José "Pepín" Cestero of Bayamon Puerto Rico.',
-    thumbnailUrl: "terremoto-founding-territory-match-1973",
-    videoUrl: "https://www.youtube.com/watch?v=dLLUtKjok6s",
-    durationSeconds: 900,
-    publishedAt: "2026-09-26T20:00:00-04:00",
-    showType: "live-event",
-    access: "subscribers",
-    wrestlers: [],
-  },
-  {
     id: "v16",
     slug: "island-brawlers-tag-classic-1976",
     title: "The Island Brawlers — Tag Team Classic",
