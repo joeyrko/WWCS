@@ -88,3 +88,29 @@ export async function setDesktopBlock(enabled: boolean): Promise<void> {
     .from("app_settings")
     .upsert({ key: DESKTOP_BLOCK_KEY, value: "true", updated_at: new Date().toISOString() });
 }
+
+const GEO_FENCE_DISABLED_KEY = "geo_fence_disabled";
+
+// The Puerto Rico live-event blackout (see lib/geo-fence.ts) is on by
+// default — this is an opt-out, not an opt-in, unlike the other toggles
+// here. Absent (the normal state) means the geo-fence is active; setting
+// this key is what turns it off, e.g. for a promotional PR-inclusive event
+// or to rule the geo-fence out while investigating an access complaint.
+export async function isGeoFenceDisabled(): Promise<boolean> {
+  const { data } = await supabase
+    .from("app_settings")
+    .select("value")
+    .eq("key", GEO_FENCE_DISABLED_KEY)
+    .maybeSingle();
+  return data?.value === "true";
+}
+
+export async function setGeoFenceDisabled(disabled: boolean): Promise<void> {
+  if (!disabled) {
+    await supabase.from("app_settings").delete().eq("key", GEO_FENCE_DISABLED_KEY);
+    return;
+  }
+  await supabase
+    .from("app_settings")
+    .upsert({ key: GEO_FENCE_DISABLED_KEY, value: "true", updated_at: new Date().toISOString() });
+}

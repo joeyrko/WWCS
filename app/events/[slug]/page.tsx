@@ -7,7 +7,7 @@ import { videos } from "@/data/videos";
 import { getRelatedVideos, getVideoBySlug } from "@/lib/data/videos";
 import { getWrestlersBySlugs } from "@/lib/data/wrestlers";
 import { userHasAccessToVideo } from "@/lib/data/users";
-import { isFreeAccessActive } from "@/lib/data/settings";
+import { isFreeAccessActive, isGeoFenceDisabled } from "@/lib/data/settings";
 import { isLiveEventBlackedOut } from "@/lib/geo-fence";
 import { VideoPlayer } from "@/components/watch/video-player";
 import { AccessGate } from "@/components/events/access-gate";
@@ -44,16 +44,17 @@ export default async function HomeVideoDetailPage({
   const video = await getVideoBySlug(slug);
   if (!video) notFound();
 
-  const [session, related, wrestlers, freeAccessActive, headersList] = await Promise.all([
+  const [session, related, wrestlers, freeAccessActive, geoFenceDisabled, headersList] = await Promise.all([
     getSession(),
     getRelatedVideos(video),
     getWrestlersBySlugs(video.wrestlers),
     isFreeAccessActive(),
+    isGeoFenceDisabled(),
     headers(),
   ]);
 
   const hasAccess = userHasAccessToVideo(session?.user, video, freeAccessActive);
-  const geoBlocked = hasAccess && isLiveEventBlackedOut(video, headersList);
+  const geoBlocked = hasAccess && !geoFenceDisabled && isLiveEventBlackedOut(video, headersList);
 
   return (
     <div className="pt-24 sm:pt-28">
