@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { toast } from "sonner";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/utils";
+import { formatDate, isRealThumbnail } from "@/lib/utils";
 import type { LiveEventRow } from "@/lib/data/live-events";
 
 type FormState = { title: string; videoUrl: string; location: string; description: string; eventDate: string };
@@ -38,11 +39,21 @@ export function LiveEventsManager({ events }: { events: LiveEventRow[] }) {
   const router = useRouter();
   const [editing, setEditing] = useState<LiveEventRow | "new" | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [removeThumbnail, setRemoveThumbnail] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  function resetThumbnail(existingUrl?: string) {
+    setThumbnailFile(null);
+    setThumbnailPreview(existingUrl && isRealThumbnail(existingUrl) ? existingUrl : null);
+    setRemoveThumbnail(false);
+  }
+
   function openAdd() {
     setForm(EMPTY_FORM);
+    resetThumbnail();
     setEditing("new");
   }
 
@@ -54,33 +65,43 @@ export function LiveEventsManager({ events }: { events: LiveEventRow[] }) {
       description: event.description,
       eventDate: isoToLocalInput(event.eventDate),
     });
+    resetThumbnail(event.thumbnailUrl ?? undefined);
     setEditing(event);
+  }
+
+  function onThumbnailChange(selected: File | null) {
+    setThumbnailFile(selected);
+    setRemoveThumbnail(false);
+    setThumbnailPreview((prev) => {
+      if (prev && prev.startsWith("blob:")) URL.revokeObjectURL(prev);
+      return selected ? URL.createObjectURL(selected) : null;
+    });
+  }
+
+  function onRemoveThumbnail() {
+    if (thumbnailPreview?.startsWith("blob:")) URL.revokeObjectURL(thumbnailPreview);
+    setThumbnailFile(null);
+    setThumbnailPreview(null);
+    setRemoveThumbnail(true);
   }
 
   async function submit() {
     if (!editing) return;
     setSaving(true);
     try {
-      const payload = {
-        title: form.title.trim(),
-        videoUrl: form.videoUrl.trim(),
-        location: form.location.trim(),
-        description: form.description.trim(),
-        eventDate: localInputToIso(form.eventDate),
-      };
+      const formData = new FormData();
+      formData.append("title", form.title.trim());
+      formData.append("videoUrl", form.videoUrl.trim());
+      formData.append("location", form.location.trim());
+      formData.append("description", form.description.trim());
+      formData.append("eventDate", localInputToIso(form.eventDate));
+      if (thumbnailFile) formData.append("thumbnail", thumbnailFile);
+      formData.append("removeThumbnail", String(removeThumbnail));
 
       const res =
         editing === "new"
-          ? await fetch("/api/admin/live-events", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload),
-            })
-          : await fetch(`/api/admin/live-events/${editing.id}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload),
-            });
+          ? await fetch("/api/admin/live-events", { method: "POST", body: formData })
+          : await fetch(`/api/admin/live-events/${editing.id}`, { method: "PUT", body: formData });
 
       if (!res.ok) {
         const data = await res.json().catch(() => null);
@@ -128,9 +149,10 @@ export function LiveEventsManager({ events }: { events: LiveEventRow[] }) {
       </div>
 
       <div className="overflow-x-auto rounded-md border border-wwc-grey-800">
-        <table className="w-full min-w-[720px] text-left text-sm">
+        <table className="w-full min-w-[780px] text-left text-sm">
           <thead className="bg-wwc-grey-900 text-xs uppercase tracking-wide text-wwc-grey-400">
             <tr>
+              <th className="px-4 py-3 font-semibold">Thumbnail</th>
               <th className="px-4 py-3 font-semibold">Title</th>
               <th className="px-4 py-3 font-semibold">Date</th>
               <th className="px-4 py-3 font-semibold">Location</th>
@@ -141,13 +163,22 @@ export function LiveEventsManager({ events }: { events: LiveEventRow[] }) {
           <tbody className="divide-y divide-wwc-grey-800 bg-wwc-grey-950">
             {events.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-wwc-grey-500">
+                <td colSpan={6} className="px-4 py-6 text-center text-wwc-grey-500">
                   No live events yet.
                 </td>
               </tr>
             )}
             {events.map((event) => (
               <tr key={event.id}>
+                <td className="px-4 py-3">
+                  {event.thumbnailUrl ? (
+                    <div className="relative h-10 w-16 overflow-hidden rounded-sm bg-wwc-black">
+                      <Image src={event.thumbnailUrl} alt="" fill className="object-cover" />
+                    </div>
+                  ) : (
+                    <span className="text-wwc-grey-500">—</span>
+                  )}
+                </td>
                 <td className="px-4 py-3 text-white">
                   <div className="flex items-center gap-2">
                     {event.title}
@@ -203,7 +234,13 @@ export function LiveEventsManager({ events }: { events: LiveEventRow[] }) {
         </table>
       </div>
 
-      <Dialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)}>
+      <Dialog
+        open={editing !== null}
+        onOpenChange={(open) => {
+          if (!open && thumbnailPreview?.startsWith("blob:")) URL.revokeObjectURL(thumbnailPreview);
+          if (!open) setEditing(null);
+        }}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>{editing === "new" ? "Add Live Event" : "Edit Live Event"}</DialogTitle>
@@ -238,6 +275,38 @@ export function LiveEventsManager({ events }: { events: LiveEventRow[] }) {
               <p className="text-xs text-wwc-grey-500">
                 Leave blank to save as a draft — hidden from the site until you add a link.
               </p>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="event-thumbnail">Thumbnail (optional)</Label>
+              <Input
+                id="event-thumbnail"
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                onChange={(e) => onThumbnailChange(e.target.files?.[0] ?? null)}
+              />
+              <p className="text-xs text-wwc-grey-500">
+                PNG, JPEG, WebP, or GIF — 5MB max. Without one, a generated card is used instead.
+              </p>
+              {thumbnailPreview && (
+                <div className="relative mt-1 aspect-video w-full max-w-[240px] overflow-hidden rounded-md border border-wwc-grey-800 bg-wwc-black">
+                  {/* Local blob: preview uses a plain img; a saved thumbnail uses next/image. */}
+                  {thumbnailPreview.startsWith("blob:") ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={thumbnailPreview} alt="Preview" className="h-full w-full object-cover" />
+                  ) : (
+                    <Image src={thumbnailPreview} alt="Preview" fill className="object-cover" />
+                  )}
+                  <button
+                    type="button"
+                    onClick={onRemoveThumbnail}
+                    aria-label="Remove thumbnail"
+                    className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-white hover:text-wwc-red"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-1.5">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Play } from "lucide-react";
 import { Poster } from "@/components/media/poster";
 import { SHOW_TYPE_LABEL } from "@/lib/show-types";
+import { isRealThumbnail } from "@/lib/utils";
 import type { Video } from "@/types";
 
 export function VideoCard({ video, className }: { video: Video; className?: string }) {
@@ -18,6 +19,7 @@ export function VideoCard({ video, className }: { video: Video; className?: stri
             aspect="square"
             monogram={false}
             showLabel={false}
+            imageUrl={isRealThumbnail(video.thumbnailUrl) ? video.thumbnailUrl : undefined}
           />
 
           <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black via-black/75 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">

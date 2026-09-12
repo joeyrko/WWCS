@@ -28,13 +28,27 @@ export async function GET() {
   return NextResponse.json({ videos });
 }
 
+// multipart/form-data, not JSON — a thumbnail image is an optional field
+// alongside the rest, same shape as sponsors' upload route.
 export async function POST(request: Request) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Not authorized." }, { status: 401 });
   }
 
-  const body = await request.json().catch(() => null);
-  const parsed = catalogVideoSchema.safeParse(body);
+  const formData = await request.formData().catch(() => null);
+  if (!formData) {
+    return NextResponse.json({ error: "Invalid form submission." }, { status: 400 });
+  }
+
+  const parsed = catalogVideoSchema.safeParse({
+    title: formData.get("title"),
+    videoUrl: formData.get("videoUrl"),
+    location: formData.get("location"),
+    description: formData.get("description"),
+    showType: formData.get("showType"),
+    access: formData.get("access"),
+    publishedAt: formData.get("publishedAt"),
+  });
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.issues[0]?.message ?? "Invalid input." },
@@ -42,9 +56,12 @@ export async function POST(request: Request) {
     );
   }
 
+  const thumbnail = formData.get("thumbnail");
+  const thumbnailFile = thumbnail instanceof File && thumbnail.size > 0 ? thumbnail : null;
+
   try {
     const staticSlugs = new Set(staticVideos.map((v) => v.slug));
-    const video = await createCatalogVideo({ ...parsed.data, staticSlugs });
+    const video = await createCatalogVideo({ ...parsed.data, thumbnailFile, staticSlugs });
     return NextResponse.json({ video });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unable to create video.";

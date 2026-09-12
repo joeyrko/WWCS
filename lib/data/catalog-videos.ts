@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { findSlugOwner, slugify } from "@/lib/data/video-slugs";
+import { uploadEventThumbnail, deleteEventThumbnail } from "@/lib/data/event-thumbnails";
 import type { AccessLevel, ShowType, Video } from "@/types";
 
 // The rest of the catalog (everything except live events, which has its
@@ -21,6 +22,7 @@ export interface CatalogVideoRow {
   showType: CatalogShowType;
   access: AccessLevel;
   publishedAt: string; // ISO 8601
+  thumbnailUrl: string | null;
   createdAt: string;
 }
 
@@ -34,6 +36,7 @@ interface CatalogVideoDbRow {
   show_type: CatalogShowType;
   access: AccessLevel;
   published_at: string;
+  thumbnail_url: string | null;
   created_at: string;
 }
 
@@ -48,6 +51,7 @@ function toRow(row: CatalogVideoDbRow): CatalogVideoRow {
     showType: row.show_type,
     access: row.access,
     publishedAt: row.published_at,
+    thumbnailUrl: row.thumbnail_url,
     createdAt: row.created_at,
   };
 }
@@ -61,7 +65,9 @@ export function toVideo(row: CatalogVideoRow): Video {
     slug: row.slug,
     title: row.title,
     description: row.description,
-    thumbnailUrl: row.slug, // Poster renders a generated gradient card from this seed — no real image needed.
+    // Falls back to the slug as a seed for Poster's generated gradient card
+    // when no thumbnail was uploaded.
+    thumbnailUrl: row.thumbnailUrl ?? row.slug,
     videoUrl: row.videoUrl,
     durationSeconds: 0,
     publishedAt: row.publishedAt,
@@ -108,11 +114,14 @@ interface CatalogVideoInput {
   showType: CatalogShowType;
   access: AccessLevel;
   publishedAt: string;
+  thumbnailFile: File | null;
   staticSlugs: Set<string>;
 }
 
 export async function createCatalogVideo(input: CatalogVideoInput): Promise<CatalogVideoRow> {
   const slug = await uniqueSlug(input.title, input.staticSlugs);
+  const thumbnailUrl = input.thumbnailFile ? await uploadEventThumbnail(input.thumbnailFile) : null;
+
   const { data, error } = await supabase
     .from("catalog_videos")
     .insert({
@@ -124,15 +133,37 @@ export async function createCatalogVideo(input: CatalogVideoInput): Promise<Cata
       show_type: input.showType,
       access: input.access,
       published_at: input.publishedAt,
+      thumbnail_url: thumbnailUrl,
     })
     .select("*")
     .single();
-  if (error || !data) throw new Error("Unable to create video.");
+  if (error || !data) {
+    if (thumbnailUrl) await deleteEventThumbnail(thumbnailUrl);
+    throw new Error("Unable to create video.");
+  }
   return toRow(data);
 }
 
-export async function updateCatalogVideo(id: string, input: CatalogVideoInput): Promise<CatalogVideoRow> {
+export async function updateCatalogVideo(
+  id: string,
+  input: CatalogVideoInput & { removeThumbnail: boolean }
+): Promise<CatalogVideoRow> {
   const slug = await uniqueSlug(input.title, input.staticSlugs, id);
+
+  const { data: existing } = await supabase
+    .from("catalog_videos")
+    .select("thumbnail_url")
+    .eq("id", id)
+    .maybeSingle();
+  const previousThumbnailUrl: string | null = existing?.thumbnail_url ?? null;
+
+  let thumbnailUrl = previousThumbnailUrl;
+  if (input.thumbnailFile) {
+    thumbnailUrl = await uploadEventThumbnail(input.thumbnailFile);
+  } else if (input.removeThumbnail) {
+    thumbnailUrl = null;
+  }
+
   const { data, error } = await supabase
     .from("catalog_videos")
     .update({
@@ -144,14 +175,25 @@ export async function updateCatalogVideo(id: string, input: CatalogVideoInput): 
       show_type: input.showType,
       access: input.access,
       published_at: input.publishedAt,
+      thumbnail_url: thumbnailUrl,
     })
     .eq("id", id)
     .select("*")
     .single();
-  if (error || !data) throw new Error("Unable to update video.");
+  if (error || !data) {
+    if (thumbnailUrl && thumbnailUrl !== previousThumbnailUrl) await deleteEventThumbnail(thumbnailUrl);
+    throw new Error("Unable to update video.");
+  }
+
+  if (previousThumbnailUrl && previousThumbnailUrl !== thumbnailUrl) {
+    await deleteEventThumbnail(previousThumbnailUrl);
+  }
+
   return toRow(data);
 }
 
 export async function deleteCatalogVideo(id: string): Promise<void> {
+  const { data } = await supabase.from("catalog_videos").select("thumbnail_url").eq("id", id).maybeSingle();
   await supabase.from("catalog_videos").delete().eq("id", id);
+  if (data?.thumbnail_url) await deleteEventThumbnail(data.thumbnail_url);
 }

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const GRADIENTS = [
@@ -24,6 +25,9 @@ interface PosterProps {
   className?: string;
   monogram?: boolean;
   showLabel?: boolean;
+  // A real uploaded thumbnail (Supabase Storage public URL). When set, this
+  // renders instead of the generated gradient card below.
+  imageUrl?: string;
 }
 
 export function Poster({
@@ -34,6 +38,7 @@ export function Poster({
   className,
   monogram = true,
   showLabel = true,
+  imageUrl,
 }: PosterProps) {
   const gradient = GRADIENTS[hashSeed(seed) % GRADIENTS.length];
   const aspectClass =
@@ -52,8 +57,13 @@ export function Poster({
         className
       )}
     >
+      {imageUrl && (
+        <Image src={imageUrl} alt="" fill sizes="(min-width: 1024px) 20vw, 50vw" className="object-cover" />
+      )}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,rgba(0,0,0,0.88)_100%)]" />
-      <div className="absolute inset-0 opacity-[0.06] [background-image:repeating-linear-gradient(115deg,#fff_0,#fff_1px,transparent_1px,transparent_14px)]" />
+      {!imageUrl && (
+        <div className="absolute inset-0 opacity-[0.06] [background-image:repeating-linear-gradient(115deg,#fff_0,#fff_1px,transparent_1px,transparent_14px)]" />
+      )}
       {monogram && (
         <span className="absolute right-3 top-3 font-display text-lg tracking-wider text-white/20">
           WWC

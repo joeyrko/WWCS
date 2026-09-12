@@ -18,14 +18,26 @@ const liveEventSchema = z.object({
   eventDate: z.string().refine((v) => !Number.isNaN(new Date(v).getTime()), "Enter a valid date."),
 });
 
+// multipart/form-data, not JSON — a thumbnail image is an optional field
+// alongside the rest, same shape as sponsors' upload route.
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Not authorized." }, { status: 401 });
   }
 
   const { id } = await params;
-  const body = await request.json().catch(() => null);
-  const parsed = liveEventSchema.safeParse(body);
+  const formData = await request.formData().catch(() => null);
+  if (!formData) {
+    return NextResponse.json({ error: "Invalid form submission." }, { status: 400 });
+  }
+
+  const parsed = liveEventSchema.safeParse({
+    title: formData.get("title"),
+    videoUrl: formData.get("videoUrl"),
+    location: formData.get("location"),
+    description: formData.get("description"),
+    eventDate: formData.get("eventDate"),
+  });
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.issues[0]?.message ?? "Invalid input." },
@@ -33,9 +45,18 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     );
   }
 
+  const thumbnail = formData.get("thumbnail");
+  const thumbnailFile = thumbnail instanceof File && thumbnail.size > 0 ? thumbnail : null;
+  const removeThumbnail = formData.get("removeThumbnail") === "true";
+
   try {
     const staticSlugs = new Set(staticVideos.map((v) => v.slug));
-    const event = await updateLiveEvent(id, { ...parsed.data, staticSlugs });
+    const event = await updateLiveEvent(id, {
+      ...parsed.data,
+      thumbnailFile,
+      removeThumbnail,
+      staticSlugs,
+    });
     return NextResponse.json({ event });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unable to update live event.";

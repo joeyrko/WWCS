@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { Poster } from "@/components/media/poster";
-import { cn } from "@/lib/utils";
+import { cn, isRealThumbnail } from "@/lib/utils";
 
 const AUTO_ADVANCE_MS = 5000;
 
 export function HeroSlideshow({
   videos,
 }: {
-  videos: { id: string; slug: string; title: string }[];
+  videos: { id: string; slug: string; title: string; thumbnailUrl: string }[];
 }) {
   const [index, setIndex] = useState(0);
 
@@ -39,6 +39,7 @@ export function HeroSlideshow({
             monogram={false}
             showLabel={false}
             className="h-full w-full rounded-none"
+            imageUrl={isRealThumbnail(video.thumbnailUrl) ? video.thumbnailUrl : undefined}
           />
         </div>
       ))}
