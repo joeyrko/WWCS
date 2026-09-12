@@ -1,16 +1,8 @@
 import Link from "next/link";
 import { Play } from "lucide-react";
 import { Poster } from "@/components/media/poster";
+import { SHOW_TYPE_LABEL } from "@/lib/show-types";
 import type { Video } from "@/types";
-
-const SHOW_TYPE_LABEL: Record<Video["showType"], string> = {
-  ppv: "PPV Replay",
-  "weekly-show": "Weekly Show",
-  "full-match": "Full Match",
-  highlight: "Highlight",
-  documentary: "Documentary",
-  "live-event": "Live Event",
-};
 
 export function VideoCard({
   video,

@@ -4,9 +4,15 @@ import { requireAdmin } from "@/lib/admin-pin";
 import { deleteLiveEvent, updateLiveEvent } from "@/lib/data/live-events";
 import { videos as staticVideos } from "@/data/videos";
 
+// videoUrl is optional — an event can be saved as a draft (title/date/
+// location set, no link yet) and stays hidden from the public site (see
+// lib/data/videos.ts) until a real link is added.
 const liveEventSchema = z.object({
   title: z.string().trim().min(1, "Title is required."),
-  videoUrl: z.string().trim().url("Enter a valid video URL."),
+  videoUrl: z
+    .string()
+    .trim()
+    .refine((v) => v === "" || z.string().url().safeParse(v).success, "Enter a valid video URL, or leave it blank."),
   location: z.string().trim().max(200).optional().default(""),
   description: z.string().trim().max(2000).optional().default(""),
   eventDate: z.string().refine((v) => !Number.isNaN(new Date(v).getTime()), "Enter a valid date."),

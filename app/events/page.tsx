@@ -9,11 +9,12 @@ import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { Reveal } from "@/components/motion/reveal";
 import { getAllVideos, getCurrentLiveEvent, searchVideos, type VideoFilters } from "@/lib/data/videos";
 import { getAllSponsors } from "@/lib/data/sponsors";
+import { CATEGORY_ROW_LABEL, CATEGORY_ROW_ORDER } from "@/lib/show-types";
 import type { Video } from "@/types";
 
 export const metadata: Metadata = {
   title: "Home",
-  description: "Browse the full WWC on-demand library — PPV replays, weekly shows, full matches, and highlights.",
+  description: "Browse the full WWC on-demand library — TV events, documentaries, dark matches, and more.",
 };
 
 function firstValue(value: string | string[] | undefined): string {
@@ -21,11 +22,10 @@ function firstValue(value: string | string[] | undefined): string {
   return value ?? "";
 }
 
-const DECADE_LABELS: Record<number, string> = {
-  1990: "Past Events",
-  2000: "Documentaries",
-};
-const DECADES = [1990, 2000];
+// Hero slideshow only — unrelated to the category rows below. 1980 has
+// never mapped to a real decade of content here; it's the mock catalog's
+// placeholder marker for "upcoming" previews, kept as-is since this isn't
+// part of the category restructuring.
 const UPCOMING_DECADE = 1980;
 const ROW_ITEM_CLASS = "w-60 sm:w-72 lg:w-80";
 const LIVE_ITEM_CLASS = "w-80 sm:w-[26rem] lg:w-[34rem]";
@@ -88,13 +88,16 @@ export default async function HomePage({
 }
 
 function BrowseRows({ videos, liveVideo }: { videos: Video[]; liveVideo: Video | undefined }) {
-  const byDecade = new Map<number, Video[]>();
+  // "Live" gets its own featured treatment below via liveVideo (whichever
+  // live event is currently nearest to now — see getCurrentLiveEvent) —
+  // every other live-event video is excluded here rather than getting its
+  // own row, same as before.
+  const byCategory = new Map<string, Video[]>();
   for (const video of videos) {
-    if (video.id === liveVideo?.id) continue;
-    const decade = decadeOf(video.publishedAt);
-    const list = byDecade.get(decade) ?? [];
+    if (video.showType === "live-event") continue;
+    const list = byCategory.get(video.showType) ?? [];
     list.push(video);
-    byDecade.set(decade, list);
+    byCategory.set(video.showType, list);
   }
 
   return (
@@ -110,12 +113,12 @@ function BrowseRows({ videos, liveVideo }: { videos: Video[]; liveVideo: Video |
           </ContentRow>
         </Reveal>
       )}
-      {DECADES.map((decade) => {
-        const rowVideos = byDecade.get(decade) ?? [];
+      {CATEGORY_ROW_ORDER.filter((c) => c !== "live-event").map((category) => {
+        const rowVideos = byCategory.get(category) ?? [];
         if (rowVideos.length === 0) return null;
         return (
-          <Reveal key={decade}>
-            <ContentRow title={DECADE_LABELS[decade]} itemClassName={ROW_ITEM_CLASS}>
+          <Reveal key={category}>
+            <ContentRow title={CATEGORY_ROW_LABEL[category]} itemClassName={ROW_ITEM_CLASS}>
               {rowVideos.map((video) => (
                 <VideoCard key={video.id} video={video} />
               ))}

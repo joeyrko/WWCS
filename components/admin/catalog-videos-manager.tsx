@@ -9,18 +9,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
+import { CATEGORY_ROW_LABEL, CATEGORY_ROW_ORDER } from "@/lib/show-types";
 import type { CatalogVideoRow, CatalogShowType } from "@/lib/data/catalog-videos";
 import type { AccessLevel } from "@/types";
 
-const SHOW_TYPE_LABEL: Record<CatalogShowType, string> = {
-  ppv: "PPV Replay",
-  "weekly-show": "Weekly Show",
-  "full-match": "Full Match",
-  highlight: "Highlight",
-  documentary: "Documentary",
-};
-const SHOW_TYPES = Object.keys(SHOW_TYPE_LABEL) as CatalogShowType[];
+// "Live Event" is excluded — that category is exclusively assigned through
+// the separate Live Events section above, never picked from this dropdown.
+// Same list/order/labels the Home and History pages use for their browse
+// rows (see lib/show-types.ts), so this dropdown always matches what a
+// visitor actually sees.
+const SHOW_TYPES = CATEGORY_ROW_ORDER.filter((c) => c !== "live-event") as CatalogShowType[];
+const SHOW_TYPE_LABEL = CATEGORY_ROW_LABEL;
 
 const ACCESS_LABEL: Record<AccessLevel, string> = {
   free: "Free",
@@ -45,7 +46,7 @@ const EMPTY_FORM: FormState = {
   location: "",
   description: "",
   publishedAt: "",
-  showType: "full-match",
+  showType: "dark-match",
   access: "subscribers",
 };
 
@@ -116,15 +117,15 @@ export function CatalogVideosManager({ videos }: { videos: CatalogVideoRow[] }) 
 
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        toast.error(data?.error ?? "Something went wrong saving that video.");
+        toast.error(data?.error ?? "Something went wrong saving that event.");
         return;
       }
 
-      toast.success(editing === "new" ? "Video created." : "Video updated.");
+      toast.success(editing === "new" ? "Event created." : "Event updated.");
       setEditing(null);
       router.refresh();
     } catch {
-      toast.error("Something went wrong saving that video.");
+      toast.error("Something went wrong saving that event.");
     } finally {
       setSaving(false);
     }
@@ -138,13 +139,13 @@ export function CatalogVideosManager({ videos }: { videos: CatalogVideoRow[] }) 
       const res = await fetch(`/api/admin/catalog-videos/${video.id}`, { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        toast.error(data?.error ?? "Something went wrong deleting that video.");
+        toast.error(data?.error ?? "Something went wrong deleting that event.");
         return;
       }
-      toast.success("Video deleted.");
+      toast.success("Event deleted.");
       router.refresh();
     } catch {
-      toast.error("Something went wrong deleting that video.");
+      toast.error("Something went wrong deleting that event.");
     } finally {
       setDeletingId(null);
     }
@@ -153,9 +154,9 @@ export function CatalogVideosManager({ videos }: { videos: CatalogVideoRow[] }) 
   return (
     <>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-display text-2xl uppercase tracking-wide text-white">Videos</h2>
+        <h2 className="font-display text-2xl uppercase tracking-wide text-white">Events</h2>
         <Button size="sm" onClick={openAdd} className="flex items-center gap-1.5">
-          <Plus className="h-4 w-4" /> Add Video
+          <Plus className="h-4 w-4" /> Add Event
         </Button>
       </div>
 
@@ -175,13 +176,22 @@ export function CatalogVideosManager({ videos }: { videos: CatalogVideoRow[] }) 
             {videos.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-4 py-6 text-center text-wwc-grey-500">
-                  No videos added here yet.
+                  No events added here yet.
                 </td>
               </tr>
             )}
             {videos.map((video) => (
               <tr key={video.id}>
-                <td className="px-4 py-3 text-white">{video.title}</td>
+                <td className="px-4 py-3 text-white">
+                  <div className="flex items-center gap-2">
+                    {video.title}
+                    {!video.videoUrl && (
+                      <Badge variant="outline" title="No link yet — hidden from the site">
+                        Draft
+                      </Badge>
+                    )}
+                  </div>
+                </td>
                 <td className="px-4 py-3 uppercase text-wwc-grey-400">{SHOW_TYPE_LABEL[video.showType]}</td>
                 <td className="px-4 py-3 uppercase text-wwc-grey-400">{ACCESS_LABEL[video.access]}</td>
                 <td className="px-4 py-3 text-wwc-grey-400">
@@ -218,7 +228,7 @@ export function CatalogVideosManager({ videos }: { videos: CatalogVideoRow[] }) 
       <Dialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{editing === "new" ? "Add Video" : "Edit Video"}</DialogTitle>
+            <DialogTitle>{editing === "new" ? "Add Event" : "Edit Event"}</DialogTitle>
           </DialogHeader>
 
           <form
@@ -239,15 +249,17 @@ export function CatalogVideosManager({ videos }: { videos: CatalogVideoRow[] }) 
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="video-url">Video Link</Label>
+              <Label htmlFor="video-url">Event Link (optional)</Label>
               <Input
                 id="video-url"
                 type="url"
                 placeholder="https://youtube.com/watch?v=..."
                 value={form.videoUrl}
                 onChange={(e) => setForm({ ...form, videoUrl: e.target.value })}
-                required
               />
+              <p className="text-xs text-wwc-grey-500">
+                Leave blank to save as a draft — hidden from the site until you add a link.
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -323,7 +335,7 @@ export function CatalogVideosManager({ videos }: { videos: CatalogVideoRow[] }) 
             </div>
 
             <Button type="submit" disabled={saving} className="mt-2 w-full">
-              {editing === "new" ? "Create Video" : "Save Changes"}
+              {editing === "new" ? "Create Event" : "Save Changes"}
             </Button>
           </form>
         </DialogContent>

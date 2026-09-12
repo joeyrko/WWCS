@@ -16,7 +16,24 @@ export interface Wrestler {
 
 export type AccessLevel = "free" | "subscribers" | "purchase";
 
-export type ShowType = "ppv" | "weekly-show" | "full-match" | "highlight" | "documentary" | "live-event";
+// "live-event" keeps its old value — it's what lib/geo-fence.ts checks to
+// decide whether a video gets the Puerto Rico blackout treatment, and it's
+// exclusively assigned via the separate live_events table/admin section
+// (see lib/data/live-events.ts), never picked directly from a dropdown.
+// The decade values are the same categories the History/Home pages already
+// group archival footage into by date — here they're a real, admin-picked
+// category instead of being computed from publishedAt.
+export type ShowType =
+  | "live-event"
+  | "tv-event"
+  | "documentary"
+  | "dark-match"
+  | "1970s"
+  | "1980s"
+  | "1990s"
+  | "2000s"
+  | "2010s"
+  | "2020s";
 
 export interface Video {
   id: string;

@@ -14,6 +14,14 @@ export interface VideoFilters {
   sort?: "newest" | "oldest";
 }
 
+// An admin-created event (live or catalog) can be saved without a link yet
+// — a draft, visible in /admin so it can be finished later, but not a real
+// video anyone can watch. Every static catalog entry has always shipped
+// with a real videoUrl, so this is a no-op for them.
+function hasLink(video: Video): boolean {
+  return video.videoUrl.trim() !== "";
+}
+
 // Live events and the rest of the catalog created from /admin (real
 // tables — see lib/data/live-events.ts and lib/data/catalog-videos.ts) are
 // merged in alongside the static catalog (data/videos.ts) everywhere videos
@@ -21,16 +29,23 @@ export interface VideoFilters {
 // never needs a separate code path for any of the three sources.
 export async function getAllVideos(): Promise<Video[]> {
   const [liveEvents, catalogVideos] = await Promise.all([getAllLiveEvents(), getAllCatalogVideos()]);
-  return [...staticVideos, ...liveEvents.map(liveEventToVideo), ...catalogVideos.map(catalogVideoToVideo)];
+  return [...staticVideos, ...liveEvents.map(liveEventToVideo), ...catalogVideos.map(catalogVideoToVideo)].filter(
+    hasLink
+  );
 }
 
 export async function getVideoBySlug(slug: string): Promise<Video | undefined> {
   const staticMatch = staticVideos.find((v) => v.slug === slug);
   if (staticMatch) return staticMatch;
   const liveEvent = await getLiveEventBySlug(slug);
-  if (liveEvent) return liveEventToVideo(liveEvent);
+  if (liveEvent) {
+    const video = liveEventToVideo(liveEvent);
+    return hasLink(video) ? video : undefined;
+  }
   const catalogVideo = await getCatalogVideoBySlug(slug);
-  return catalogVideo ? catalogVideoToVideo(catalogVideo) : undefined;
+  if (!catalogVideo) return undefined;
+  const video = catalogVideoToVideo(catalogVideo);
+  return hasLink(video) ? video : undefined;
 }
 
 export async function searchVideos(filters: VideoFilters = {}): Promise<Video[]> {

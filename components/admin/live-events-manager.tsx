@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import type { LiveEventRow } from "@/lib/data/live-events";
 
@@ -147,20 +148,33 @@ export function LiveEventsManager({ events }: { events: LiveEventRow[] }) {
             )}
             {events.map((event) => (
               <tr key={event.id}>
-                <td className="px-4 py-3 text-white">{event.title}</td>
+                <td className="px-4 py-3 text-white">
+                  <div className="flex items-center gap-2">
+                    {event.title}
+                    {!event.videoUrl && (
+                      <Badge variant="outline" title="No link yet — hidden from the site">
+                        Draft
+                      </Badge>
+                    )}
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-wwc-grey-400">
                   {formatDate(event.eventDate, { month: "short", day: "numeric", year: "numeric" })}
                 </td>
                 <td className="px-4 py-3 text-wwc-grey-400">{event.location || "—"}</td>
                 <td className="max-w-[200px] truncate px-4 py-3 text-wwc-grey-400">
-                  <a
-                    href={event.videoUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-wwc-white hover:underline"
-                  >
-                    {event.videoUrl}
-                  </a>
+                  {event.videoUrl ? (
+                    <a
+                      href={event.videoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-wwc-white hover:underline"
+                    >
+                      {event.videoUrl}
+                    </a>
+                  ) : (
+                    "—"
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
@@ -213,15 +227,17 @@ export function LiveEventsManager({ events }: { events: LiveEventRow[] }) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="event-video-url">Video Link</Label>
+              <Label htmlFor="event-video-url">Video Link (optional)</Label>
               <Input
                 id="event-video-url"
                 type="url"
                 placeholder="https://youtube.com/watch?v=..."
                 value={form.videoUrl}
                 onChange={(e) => setForm({ ...form, videoUrl: e.target.value })}
-                required
               />
+              <p className="text-xs text-wwc-grey-500">
+                Leave blank to save as a draft — hidden from the site until you add a link.
+              </p>
             </div>
 
             <div className="flex flex-col gap-1.5">
