@@ -50,12 +50,14 @@ export function AdminTabs({
 }) {
   return (
     <Tabs defaultValue="content">
-      <TabsList className="flex-wrap">
-        <TabsTrigger value="content">Content</TabsTrigger>
-        <TabsTrigger value="controls">Site Controls</TabsTrigger>
-        <TabsTrigger value="users">Users</TabsTrigger>
-        <TabsTrigger value="orders">Orders</TabsTrigger>
-      </TabsList>
+      <div className="flex justify-center">
+        <TabsList className="flex-wrap">
+          <TabsTrigger value="content">Content</TabsTrigger>
+          <TabsTrigger value="controls">Site Controls</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="orders">Orders</TabsTrigger>
+        </TabsList>
+      </div>
 
       <TabsContent value="content">
         <div className="flex flex-col gap-10">
