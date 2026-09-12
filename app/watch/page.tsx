@@ -7,9 +7,9 @@ import { ContentRow } from "@/components/shared/content-row";
 import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
 import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { Reveal } from "@/components/motion/reveal";
-import { getAllVideos, getCurrentLiveEvent, searchVideos, type VideoFilters } from "@/lib/data/videos";
+import { getAllVideos, searchVideos, type VideoFilters } from "@/lib/data/videos";
 import { getAllSponsors } from "@/lib/data/sponsors";
-import { CATEGORY_ROW_LABEL, CATEGORY_ROW_ORDER } from "@/lib/show-types";
+import { CATEGORY_ROW_LABEL, HISTORY_ROW_ORDER } from "@/lib/show-types";
 import type { Video } from "@/types";
 
 export const metadata: Metadata = {
@@ -26,7 +26,6 @@ function firstValue(value: string | string[] | undefined): string {
 // note in app/events/page.tsx.
 const UPCOMING_DECADE = 1980;
 const ROW_ITEM_CLASS = "w-60 sm:w-72 lg:w-80";
-const LIVE_ITEM_CLASS = "w-80 sm:w-[26rem] lg:w-[34rem]";
 
 function decadeOf(publishedAt: string): number {
   return Math.floor(new Date(publishedAt).getFullYear() / 10) * 10;
@@ -44,7 +43,7 @@ export default async function WatchPage({
   const sort = firstValue(params.sort) || "newest";
   const hasActiveFilters = Boolean(q) || type !== "all" || wrestler !== "all";
 
-  const [all, liveVideo, sponsors] = await Promise.all([getAllVideos(), getCurrentLiveEvent(), getAllSponsors()]);
+  const [all, sponsors] = await Promise.all([getAllVideos(), getAllSponsors()]);
   const upcoming = all.filter((video) => decadeOf(video.publishedAt) === UPCOMING_DECADE);
 
   return (
@@ -68,7 +67,7 @@ export default async function WatchPage({
       {hasActiveFilters ? (
         <FilteredResults filters={{ query: q || undefined, showType: type as VideoFilters["showType"], wrestlerSlug: wrestler === "all" ? undefined : wrestler, sort: sort === "oldest" ? "oldest" : "newest" }} />
       ) : (
-        <BrowseRows videos={all} liveVideo={liveVideo} />
+        <BrowseRows videos={all} />
       )}
 
       {sponsors.length > 0 && (
@@ -85,7 +84,7 @@ export default async function WatchPage({
   );
 }
 
-function BrowseRows({ videos, liveVideo }: { videos: Video[]; liveVideo: Video | undefined }) {
+function BrowseRows({ videos }: { videos: Video[] }) {
   const byCategory = new Map<string, Video[]>();
   for (const video of videos) {
     if (video.showType === "live-event") continue;
@@ -96,16 +95,7 @@ function BrowseRows({ videos, liveVideo }: { videos: Video[]; liveVideo: Video |
 
   return (
     <div className="flex flex-col gap-10 py-10 sm:py-14">
-      {liveVideo && (
-        <Reveal>
-          {/* Genuinely red, not the "wwc-red" token — see the same note in
-              app/events/page.tsx. */}
-          <ContentRow title="Live" itemClassName={LIVE_ITEM_CLASS} titleClassName="text-[#e0141a]">
-            <VideoCard video={liveVideo} />
-          </ContentRow>
-        </Reveal>
-      )}
-      {CATEGORY_ROW_ORDER.filter((c) => c !== "live-event").map((category) => {
+      {HISTORY_ROW_ORDER.map((category) => {
         const rowVideos = byCategory.get(category) ?? [];
         if (rowVideos.length === 0) return null;
         return (
