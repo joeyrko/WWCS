@@ -10,6 +10,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { getAllVideos, getCurrentLiveEvent, searchVideos, type VideoFilters } from "@/lib/data/videos";
 import { getAllSponsors } from "@/lib/data/sponsors";
 import { CATEGORY_ROW_LABEL, HOME_ROW_ORDER } from "@/lib/show-types";
+import { isRealThumbnail } from "@/lib/utils";
 import type { Video } from "@/types";
 
 export const metadata: Metadata = {
@@ -95,6 +96,10 @@ function BrowseRows({ videos, liveVideo }: { videos: Video[]; liveVideo: Video |
   const byCategory = new Map<string, Video[]>();
   for (const video of videos) {
     if (video.showType === "live-event") continue;
+    // A card with no real uploaded thumbnail only renders a generated
+    // gradient placeholder — kept out of the browse rows entirely rather
+    // than shown with no real image.
+    if (!isRealThumbnail(video.thumbnailUrl)) continue;
     const list = byCategory.get(video.showType) ?? [];
     list.push(video);
     byCategory.set(video.showType, list);
@@ -131,7 +136,8 @@ function BrowseRows({ videos, liveVideo }: { videos: Video[]; liveVideo: Video |
 }
 
 async function FilteredResults({ filters }: { filters: VideoFilters }) {
-  const videos = await searchVideos(filters);
+  const results = await searchVideos(filters);
+  const videos = results.filter((video) => isRealThumbnail(video.thumbnailUrl));
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
