@@ -3,16 +3,9 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { getSession } from "@/lib/get-session";
 import { getAllUsers, getAllOrders } from "@/lib/data/users";
-import { Badge } from "@/components/ui/badge";
 import { AdminPinGate } from "@/components/admin/admin-pin-gate";
-import { FreeAccessToggle } from "@/components/admin/free-access-toggle";
-import { MaintenanceModeToggle } from "@/components/admin/maintenance-mode-toggle";
-import { DesktopBlockToggle } from "@/components/admin/desktop-block-toggle";
-import { GeoFenceToggle } from "@/components/admin/geo-fence-toggle";
-import { UserManager, type AdminUserRow } from "@/components/admin/user-manager";
-import { LiveEventsManager } from "@/components/admin/live-events-manager";
-import { CatalogVideosManager } from "@/components/admin/catalog-videos-manager";
-import { SponsorsManager } from "@/components/admin/sponsors-manager";
+import { AdminTabs } from "@/components/admin/admin-tabs";
+import type { AdminUserRow } from "@/components/admin/user-manager";
 import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
 import {
   getFreeAccessUntil,
@@ -24,8 +17,7 @@ import {
 import { getAllLiveEvents } from "@/lib/data/live-events";
 import { getAllCatalogVideos } from "@/lib/data/catalog-videos";
 import { getAllSponsors } from "@/lib/data/sponsors";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import type { Order } from "@/types";
+import { formatCurrency } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -40,12 +32,6 @@ function StatCard({ label, value }: { label: string; value: string | number }) {
     </div>
   );
 }
-
-const ORDER_STATUS_VARIANT: Record<Order["status"], "subscribers" | "default" | "purchase"> = {
-  paid: "subscribers",
-  pending: "default",
-  refunded: "purchase",
-};
 
 export default async function AdminPage() {
   const session = await getSession();
@@ -100,6 +86,7 @@ export default async function AdminPage() {
     orderCount: orderCountByUser.get(user.id) ?? 0,
     isAdmin: !!user.isAdmin,
   }));
+  const userEmailsById = users.map((user) => ({ id: user.id, email: user.email }));
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28 lg:px-8">
@@ -121,83 +108,20 @@ export default async function AdminPage() {
         <StatCard label="Revenue" value={formatCurrency(revenueInCents)} />
       </div>
 
-      <div className="mb-10">
-        <MaintenanceModeToggle active={maintenanceModeActive} />
-      </div>
-
-      <div className="mb-10">
-        <DesktopBlockToggle active={desktopBlockActive} />
-      </div>
-
-      <div className="mb-10">
-        <GeoFenceToggle disabled={geoFenceDisabled} />
-      </div>
-
-      <div className="mb-10">
-        <FreeAccessToggle
-          freeAccessUntil={freeAccessUntil ? freeAccessUntil.toISOString() : null}
-          active={freeAccessActive}
-        />
-      </div>
-
-      <section className="mb-10">
-        <UserManager users={userRows} currentUserId={session.user.id} />
-      </section>
-
-      <section className="mb-10">
-        <LiveEventsManager events={liveEvents} />
-      </section>
-
-      <section className="mb-10">
-        <CatalogVideosManager videos={catalogVideos} />
-      </section>
-
-      <section className="mb-10">
-        <SponsorsManager sponsors={sponsors} />
-      </section>
-
-      <section className="mb-10">
-        <h2 className="mb-4 font-display text-2xl uppercase tracking-wide text-white">
-          Order History
-        </h2>
-        <div className="overflow-x-auto rounded-md border border-wwc-grey-800">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="bg-wwc-grey-900 text-xs uppercase tracking-wide text-wwc-grey-400">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Item</th>
-                <th className="px-4 py-3 font-semibold">User</th>
-                <th className="px-4 py-3 font-semibold">Type</th>
-                <th className="px-4 py-3 font-semibold">Date</th>
-                <th className="px-4 py-3 font-semibold">Amount</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-wwc-grey-800 bg-wwc-grey-950">
-              {orders.map((order) => {
-                const user = users.find((u) => u.id === order.userId);
-                return (
-                  <tr key={order.id}>
-                    <td className="px-4 py-3 text-white">{order.label}</td>
-                    <td className="px-4 py-3 text-wwc-grey-400">{user?.email ?? order.userId}</td>
-                    <td className="px-4 py-3 uppercase text-wwc-grey-400">{order.type}</td>
-                    <td className="px-4 py-3 text-wwc-grey-400">
-                      {formatDate(order.createdAt, { month: "short", day: "numeric", year: "numeric" })}
-                    </td>
-                    <td className="px-4 py-3 text-wwc-grey-300">
-                      {formatCurrency(order.amountInCents)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge variant={ORDER_STATUS_VARIANT[order.status]} className="capitalize">
-                        {order.status}
-                      </Badge>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <AdminTabs
+        freeAccessUntil={freeAccessUntil ? freeAccessUntil.toISOString() : null}
+        freeAccessActive={freeAccessActive}
+        maintenanceModeActive={maintenanceModeActive}
+        desktopBlockActive={desktopBlockActive}
+        geoFenceDisabled={geoFenceDisabled}
+        userRows={userRows}
+        currentUserId={session.user.id}
+        liveEvents={liveEvents}
+        catalogVideos={catalogVideos}
+        sponsors={sponsors}
+        orders={orders}
+        users={userEmailsById}
+      />
     </div>
   );
 }
