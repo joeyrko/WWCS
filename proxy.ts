@@ -35,9 +35,13 @@ const PLAN_EXEMPT_PATHS = new Set([...PUBLIC_PATHS, "/pricing"]);
 // an admin can actually get in and turn it back off; the rest are low-risk
 // legal/technical pages, harmless to leave public. Everything else,
 // including /pricing and checkout, redirects to /maintenance for anyone who
-// isn't already signed in as an admin.
+// isn't already signed in as an admin. Also includes /desktop-blocked — if
+// the desktop block is ever on at the same time, that page has to stay
+// reachable too, or a desktop visitor would bounce between the two checks
+// forever (each one redirecting to the page the other just blocked).
 const MAINTENANCE_ALLOWED_PATHS = new Set([
   "/maintenance",
+  "/desktop-blocked",
   "/sign-in",
   "/forgot-password",
   "/reset-password",
@@ -53,8 +57,11 @@ const MAINTENANCE_ALLOWED_PATHS = new Set([
 // an admin can sign in from a desktop and turn it back off; the rest are
 // low-risk legal/technical pages. Everything else redirects desktop browsers
 // to /desktop-blocked; phone/tablet browsers and the TV app are unaffected.
+// Also includes /maintenance — see the same note above, mirrored so this
+// check can't loop against that one either.
 const DESKTOP_BLOCK_ALLOWED_PATHS = new Set([
   "/desktop-blocked",
+  "/maintenance",
   "/sign-in",
   "/forgot-password",
   "/reset-password",
