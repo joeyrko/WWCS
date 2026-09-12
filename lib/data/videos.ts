@@ -1,5 +1,10 @@
 import { videos as staticVideos } from "@/data/videos";
-import { getAllLiveEvents, getLiveEventBySlug, toVideo } from "@/lib/data/live-events";
+import { getAllLiveEvents, getLiveEventBySlug, toVideo as liveEventToVideo } from "@/lib/data/live-events";
+import {
+  getAllCatalogVideos,
+  getCatalogVideoBySlug,
+  toVideo as catalogVideoToVideo,
+} from "@/lib/data/catalog-videos";
 import type { ShowType, Video } from "@/types";
 
 export interface VideoFilters {
@@ -9,20 +14,23 @@ export interface VideoFilters {
   sort?: "newest" | "oldest";
 }
 
-// Live events created from /admin (a real table) are merged in alongside
-// the static catalog (data/videos.ts) everywhere videos are listed, looked
-// up, searched, or related — so the rest of the app never needs a separate
-// code path for one vs. the other.
+// Live events and the rest of the catalog created from /admin (real
+// tables — see lib/data/live-events.ts and lib/data/catalog-videos.ts) are
+// merged in alongside the static catalog (data/videos.ts) everywhere videos
+// are listed, looked up, searched, or related — so the rest of the app
+// never needs a separate code path for any of the three sources.
 export async function getAllVideos(): Promise<Video[]> {
-  const liveEvents = await getAllLiveEvents();
-  return [...staticVideos, ...liveEvents.map(toVideo)];
+  const [liveEvents, catalogVideos] = await Promise.all([getAllLiveEvents(), getAllCatalogVideos()]);
+  return [...staticVideos, ...liveEvents.map(liveEventToVideo), ...catalogVideos.map(catalogVideoToVideo)];
 }
 
 export async function getVideoBySlug(slug: string): Promise<Video | undefined> {
   const staticMatch = staticVideos.find((v) => v.slug === slug);
   if (staticMatch) return staticMatch;
   const liveEvent = await getLiveEventBySlug(slug);
-  return liveEvent ? toVideo(liveEvent) : undefined;
+  if (liveEvent) return liveEventToVideo(liveEvent);
+  const catalogVideo = await getCatalogVideoBySlug(slug);
+  return catalogVideo ? catalogVideoToVideo(catalogVideo) : undefined;
 }
 
 export async function searchVideos(filters: VideoFilters = {}): Promise<Video[]> {

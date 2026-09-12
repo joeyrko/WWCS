@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { findSlugOwner, slugify } from "@/lib/data/video-slugs";
 import type { Video } from "@/types";
 
 // Live events managed from /admin — unlike the rest of the catalog (a
@@ -73,29 +74,19 @@ export async function getLiveEventBySlug(slug: string): Promise<LiveEventRow | u
   return data ? toRow(data) : undefined;
 }
 
-function slugify(title: string): string {
-  return (
-    title
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "live-event"
-  );
-}
-
 // Appends -2, -3, ... only if the plain slugified title collides with an
-// existing live event OR one of the static catalog's slugs — this table's
-// slugs share the same /watch/[slug] and /events/[slug] route space as
-// data/videos.ts, so both have to be checked.
+// existing live event, a catalog video, or one of the static catalog's
+// slugs — all three share the same /watch/[slug] and /events/[slug] route
+// space, so all have to be checked.
 async function uniqueSlug(title: string, staticSlugs: Set<string>, excludeId?: string): Promise<string> {
   const base = slugify(title);
   let candidate = base;
   let n = 2;
   for (;;) {
     const collidesWithStatic = staticSlugs.has(candidate);
-    const existing = await getLiveEventBySlug(candidate);
-    const collidesWithLiveEvent = !!existing && existing.id !== excludeId;
-    if (!collidesWithStatic && !collidesWithLiveEvent) return candidate;
+    const owner = await findSlugOwner(candidate);
+    const collides = !!owner && !(owner.table === "live_events" && owner.id === excludeId);
+    if (!collidesWithStatic && !collides) return candidate;
     candidate = `${base}-${n}`;
     n++;
   }
