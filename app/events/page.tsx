@@ -9,7 +9,7 @@ import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { Reveal } from "@/components/motion/reveal";
 import { getAllVideos, getCurrentLiveEvent, searchVideos, type VideoFilters } from "@/lib/data/videos";
 import { getAllSponsors } from "@/lib/data/sponsors";
-import { CATEGORY_ROW_LABEL, CATEGORY_ROW_ORDER } from "@/lib/show-types";
+import { CATEGORY_ROW_LABEL, HOME_ROW_ORDER } from "@/lib/show-types";
 import type { Video } from "@/types";
 
 export const metadata: Metadata = {
@@ -113,7 +113,7 @@ function BrowseRows({ videos, liveVideo }: { videos: Video[]; liveVideo: Video |
           </ContentRow>
         </Reveal>
       )}
-      {CATEGORY_ROW_ORDER.filter((c) => c !== "live-event").map((category) => {
+      {HOME_ROW_ORDER.filter((c) => c !== "live-event").map((category) => {
         const rowVideos = byCategory.get(category) ?? [];
         if (rowVideos.length === 0) return null;
         return (

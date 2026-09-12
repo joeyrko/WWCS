@@ -44,3 +44,8 @@ export const CATEGORY_ROW_ORDER: ShowType[] = [
   "2010s",
   "2020s",
 ];
+
+// The Home page only shows the current/recent categories — Live, TV Events,
+// Documentaries. The full decade archive (Dark Matches, 1970's–2020's) only
+// shows on the History page, which still uses CATEGORY_ROW_ORDER above.
+export const HOME_ROW_ORDER: ShowType[] = ["live-event", "tv-event", "documentary"];
