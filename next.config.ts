@@ -9,6 +9,18 @@ const nextConfig: NextConfig = {
   // This opts it out of bundling entirely so Next uses a plain native
   // require(), preserving its real on-disk __dirname.
   serverExternalPackages: ["geoip-lite"],
+  images: {
+    // Admin-uploaded sponsor logos live in Supabase Storage (public bucket
+    // "sponsor-images") — next/image refuses to optimize/serve an external
+    // host unless it's explicitly allowed here.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "nizjupztpqwucdrnfmww.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
 };
 
 export default withSentryConfig(nextConfig, {

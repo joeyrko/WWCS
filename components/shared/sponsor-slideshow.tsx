@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import type { Sponsor } from "@/data/sponsors";
+import type { Sponsor } from "@/types";
 
 const AUTO_ADVANCE_MS = 4000;
 

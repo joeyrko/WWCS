@@ -11,6 +11,7 @@ import { DesktopBlockToggle } from "@/components/admin/desktop-block-toggle";
 import { GeoFenceToggle } from "@/components/admin/geo-fence-toggle";
 import { UserManager, type AdminUserRow } from "@/components/admin/user-manager";
 import { LiveEventsManager } from "@/components/admin/live-events-manager";
+import { SponsorsManager } from "@/components/admin/sponsors-manager";
 import { ADMIN_PIN_COOKIE } from "@/lib/admin-pin";
 import {
   getFreeAccessUntil,
@@ -20,6 +21,7 @@ import {
   isGeoFenceDisabled,
 } from "@/lib/data/settings";
 import { getAllLiveEvents } from "@/lib/data/live-events";
+import { getAllSponsors } from "@/lib/data/sponsors";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Order } from "@/types";
 
@@ -60,6 +62,7 @@ export default async function AdminPage() {
     desktopBlockActive,
     geoFenceDisabled,
     liveEvents,
+    sponsors,
   ] = await Promise.all([
     getAllUsers(),
     getAllOrders(),
@@ -69,6 +72,7 @@ export default async function AdminPage() {
     isDesktopBlockActive(),
     isGeoFenceDisabled(),
     getAllLiveEvents(),
+    getAllSponsors(),
   ]);
 
   const revenueInCents = orders
@@ -138,6 +142,10 @@ export default async function AdminPage() {
 
       <section className="mb-10">
         <LiveEventsManager events={liveEvents} />
+      </section>
+
+      <section className="mb-10">
+        <SponsorsManager sponsors={sponsors} />
       </section>
 
       <section className="mb-10">

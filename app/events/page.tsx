@@ -8,7 +8,7 @@ import { SponsorSlideshow } from "@/components/shared/sponsor-slideshow";
 import { StaggerGrid } from "@/components/motion/stagger-grid";
 import { Reveal } from "@/components/motion/reveal";
 import { getAllVideos, getCurrentLiveEvent, searchVideos, type VideoFilters } from "@/lib/data/videos";
-import { sponsors } from "@/data/sponsors";
+import { getAllSponsors } from "@/lib/data/sponsors";
 import type { Video } from "@/types";
 
 export const metadata: Metadata = {
@@ -46,7 +46,7 @@ export default async function HomePage({
   const sort = firstValue(params.sort) || "newest";
   const hasActiveFilters = Boolean(q) || type !== "all" || wrestler !== "all";
 
-  const [all, liveVideo] = await Promise.all([getAllVideos(), getCurrentLiveEvent()]);
+  const [all, liveVideo, sponsors] = await Promise.all([getAllVideos(), getCurrentLiveEvent(), getAllSponsors()]);
   const upcoming = all.filter((video) => decadeOf(video.publishedAt) === UPCOMING_DECADE);
 
   return (
