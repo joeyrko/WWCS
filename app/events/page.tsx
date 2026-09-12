@@ -73,14 +73,16 @@ export default async function HomePage({
         <BrowseRows videos={all} liveVideo={liveVideo} />
       )}
 
-      <Reveal>
-        <div className="pb-10 sm:pb-14">
-          <h2 className="mb-4 px-4 font-display text-2xl uppercase tracking-wide text-white sm:px-6 lg:px-8">
-            Our Sponsors
-          </h2>
-          <SponsorSlideshow sponsors={sponsors} />
-        </div>
-      </Reveal>
+      {sponsors.length > 0 && (
+        <Reveal>
+          <div className="pb-10 sm:pb-14">
+            <h2 className="mb-4 px-4 font-display text-2xl uppercase tracking-wide text-white sm:px-6 lg:px-8">
+              Our Sponsors
+            </h2>
+            <SponsorSlideshow sponsors={sponsors} />
+          </div>
+        </Reveal>
+      )}
     </>
   );
 }
