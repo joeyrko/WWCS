@@ -59,7 +59,7 @@ export default async function WatchPage({
             Legends. Lore. Legacy.
           </h1>
           <p className="mt-3 max-w-2xl text-wwc-grey-400">
-            Grab your tickets, get official gear, and catch the latest news at
+            Grab your official gear, and catch the latest news at
             WORLDWRESTLINGCOUNCIL.COM
           </p>
         </StaggerIn>
