@@ -71,7 +71,7 @@ export function toVideo(row: LiveEventRow): Video {
 }
 
 export async function getAllLiveEvents(): Promise<LiveEventRow[]> {
-  const { data } = await supabase.from("live_events").select("*").order("event_date", { ascending: false });
+  const { data } = await supabase.from("live_events").select("*").order("event_date", { ascending: true });
   return (data ?? []).map(toRow);
 }
 

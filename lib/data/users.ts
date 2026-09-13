@@ -264,7 +264,7 @@ export async function getOrdersForUser(userId: string): Promise<Order[]> {
     .from("orders")
     .select("*")
     .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: true });
   return (data ?? []).map(toOrder);
 }
 
@@ -309,7 +309,7 @@ export async function getAllUsers(): Promise<MockUser[]> {
 }
 
 export async function getAllOrders(): Promise<Order[]> {
-  const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+  const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: true });
   return (data ?? []).map(toOrder);
 }
 
