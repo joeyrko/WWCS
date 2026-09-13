@@ -264,7 +264,7 @@ export async function getOrdersForUser(userId: string): Promise<Order[]> {
     .from("orders")
     .select("*")
     .eq("user_id", userId)
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: false });
   return (data ?? []).map(toOrder);
 }
 
@@ -304,12 +304,12 @@ function toOrder(row: OrderRow): Order {
 
 // Admin-only reads — callers are responsible for verifying isAdmin first.
 export async function getAllUsers(): Promise<MockUser[]> {
-  const { data } = await supabase.from("users").select("*").order("created_at", { ascending: true });
+  const { data } = await supabase.from("users").select("*").order("created_at", { ascending: false });
   return (data ?? []).map(toMockUser);
 }
 
 export async function getAllOrders(): Promise<Order[]> {
-  const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: true });
+  const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
   return (data ?? []).map(toOrder);
 }
 

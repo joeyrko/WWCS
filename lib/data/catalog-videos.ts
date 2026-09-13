@@ -79,7 +79,7 @@ export function toVideo(row: CatalogVideoRow): Video {
 }
 
 export async function getAllCatalogVideos(): Promise<CatalogVideoRow[]> {
-  const { data } = await supabase.from("catalog_videos").select("*").order("published_at", { ascending: true });
+  const { data } = await supabase.from("catalog_videos").select("*").order("published_at", { ascending: false });
   return (data ?? []).map(toRow);
 }
 
