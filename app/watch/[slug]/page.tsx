@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { Calendar, MapPin } from "lucide-react";
 import { getSession } from "@/lib/get-session";
 import { videos } from "@/data/videos";
-import { getRelatedVideos, getVideoBySlug } from "@/lib/data/videos";
+import { getVideoBySlug } from "@/lib/data/videos";
 import { getWrestlersBySlugs } from "@/lib/data/wrestlers";
 import { userHasAccessToVideo } from "@/lib/data/users";
 import { isFreeAccessActive, isGeoFenceDisabled } from "@/lib/data/settings";
@@ -12,7 +12,6 @@ import { isLiveEventBlackedOut } from "@/lib/geo-fence";
 import { VideoPlayer } from "@/components/watch/video-player";
 import { AccessGate } from "@/components/watch/access-gate";
 import { GeoBlockedGate } from "@/components/shared/geo-blocked-gate";
-import { RelatedVideosRail } from "@/components/watch/related-videos-rail";
 import { formatDate } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -44,9 +43,8 @@ export default async function WatchDetailPage({
   const video = await getVideoBySlug(slug);
   if (!video) notFound();
 
-  const [session, related, wrestlers, freeAccessActive, geoFenceDisabled, headersList] = await Promise.all([
+  const [session, wrestlers, freeAccessActive, geoFenceDisabled, headersList] = await Promise.all([
     getSession(),
-    getRelatedVideos(video),
     getWrestlersBySlugs(video.wrestlers),
     isFreeAccessActive(),
     isGeoFenceDisabled(),
@@ -97,10 +95,6 @@ export default async function WatchDetailPage({
               ))}
             </div>
           )}
-      </div>
-
-      <div className="mt-4 border-t border-wwc-grey-900 pt-10">
-        <RelatedVideosRail videos={related} />
       </div>
     </div>
   );

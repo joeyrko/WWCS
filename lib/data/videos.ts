@@ -72,19 +72,6 @@ export async function searchVideos(filters: VideoFilters = {}): Promise<Video[]>
   return results;
 }
 
-export async function getRelatedVideos(video: Video, limit = 4): Promise<Video[]> {
-  const all = await getAllVideos();
-  return all
-    .filter((v) => v.id !== video.id)
-    .filter(
-      (v) =>
-        v.showType === video.showType ||
-        v.wrestlers.some((w) => video.wrestlers.includes(w)) ||
-        v.relatedEventSlug === video.relatedEventSlug
-    )
-    .slice(0, limit);
-}
-
 export async function getTrendingVideos(limit = 8): Promise<Video[]> {
   const all = await getAllVideos();
   return all.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()).slice(0, limit);
